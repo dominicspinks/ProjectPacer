@@ -1585,3 +1585,7 @@ body > footer {
 		text-decoration: underline;
 	}
 }
+
+.container {
+	border: 1px solid grey;
+}

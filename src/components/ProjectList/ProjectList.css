@@ -1,0 +1,20 @@
+.projectListHeader {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.5rem;
+	border-bottom: 1px solid grey;
+}
+
+.field-v {
+	display: flex;
+	flex-direction: column;
+}
+
+.field-h {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.5rem;
+}

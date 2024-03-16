@@ -4,10 +4,10 @@ import { useAuth } from '../contexts/AuthProvider';
 export async function getUserDetails(userId) {
 	const { data } = await supabaseClient
 		.from('profile')
-		.select('department')
+		.select('department, full_name')
 		.eq('user_id', userId)
 		.limit(1);
-	console.log({ ...data[0] });
+	console.log('getuserdetails', { ...data[0] });
 	return !data ? {} : { ...data[0] };
 }
 

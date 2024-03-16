@@ -11,7 +11,7 @@ export default function NavBar({ supabase }) {
 	}
 
 	return (
-		<nav>
+		<nav className='nav'>
 			{!user ? (
 				<NavLink to='/auth'>Login</NavLink>
 			) : (

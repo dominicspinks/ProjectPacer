@@ -7,9 +7,12 @@ import { supabaseClient } from '../../config/supabase-client';
 import * as userAPI from '../../utilities/user-api';
 
 export default function EditProfilePage() {
-	const { user, userDetails, updateUserData } = useAuth();
+	const { user, userDetails, getUserDetails } = useAuth();
 	const [formData, setFormData] = useState({
-		fullName: user.user_metadata.full_name,
+		fullName:
+			!userDetails || userDetails.full_name === null
+				? ''
+				: userDetails.full_name,
 		department:
 			!userDetails || userDetails.department === null
 				? ''
@@ -27,21 +30,25 @@ export default function EditProfilePage() {
 	async function handleSubmit(e) {
 		e.preventDefault();
 
-		const user_data = {
-			user_id: user.id,
-			full_name: formData.fullName,
-		};
+		// const user_data = {
+		// 	user_id: user.id,
+		// 	full_name: formData.fullName,
+		// };
 		const profile_data = {
 			department: formData.department,
+			email: formData.email,
+			full_name: formData.fullName,
 		};
 
-		const { error: error_user } = await updateUserData(user_data);
-		const { error: error_profile } = await supabaseClient
+		console.log('profile_data', profile_data, user.id);
+		// const { error: error_user } = await updateUserData(user_data);
+		const { data: data_update, error: error_profile } = await supabaseClient
 			.from('profile')
 			.update(profile_data)
 			.eq('user_id', user.id);
-		console.log(error_profile, error_user);
-		if (!error_user && !error_profile) {
+		console.log('data', data_update, 'error update', error_profile);
+		await getUserDetails();
+		if (!error_profile) {
 			navigateTo('/profile');
 		}
 	}

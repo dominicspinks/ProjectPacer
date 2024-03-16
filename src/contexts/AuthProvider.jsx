@@ -46,13 +46,14 @@ export const AuthProvider = ({ children }) => {
 		};
 	}, []);
 
+	async function getUserDetails() {
+		const userDetails = await userAPI.getUserDetails(user.id);
+		console.log(userDetails);
+		setUserDetails({ ...userDetails });
+	}
 	useEffect(() => {
 		if (!user) return;
-		async function getUserDetails() {
-			const userDetails = await userAPI.getUserDetails(user.id);
-			console.log(userDetails);
-			setUserDetails({ ...userDetails });
-		}
+
 		getUserDetails();
 	}, [user]);
 
@@ -60,11 +61,12 @@ export const AuthProvider = ({ children }) => {
 		session,
 		user,
 		userDetails,
+		getUserDetails,
 		signUp: (data) => supabaseClient.auth.signUp(data),
 		signIn: (data) => supabaseClient.auth.signInWithPassword(data),
 		updateUserData: (data) => supabaseClient.auth.updateUser({ data }),
-		updateMetaData: (data) =>
-			supabaseClient.auth.updateUser({ data: data }),
+		// updateMetaData: (data) =>
+		// supabaseClient.auth.updateUser({ data: data }),
 		signOut: () => supabaseClient.auth.signOut(),
 	};
 

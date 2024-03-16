@@ -10,7 +10,7 @@ export default function ProfilePage() {
 				<div className='field'>
 					<div className='label'>Name:</div>
 					<div className='value'>
-						{!user ? '' : user.user_metadata.full_name}
+						{!user ? '' : userDetails.full_name}
 					</div>
 				</div>
 				<div className='field'>

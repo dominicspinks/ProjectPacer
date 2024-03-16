@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../contexts/AuthProvider';
+import { supabaseClient } from '../../config/supabase-client';
 
 export default function SignupForm({ setSignup }) {
 	const emailRef = useRef();
@@ -23,15 +24,32 @@ export default function SignupForm({ setSignup }) {
 		const password = passwordRef.current.value;
 		console.log();
 
-		const { error } = await signUp({ email, password });
+		const { data: data_signup, error: error_signup } = await signUp({
+			email,
+			password,
+		});
 
-		console.log(error);
-		if (error) {
+		console.log('data', data_signup, 'error', error_signup);
+		if (error_signup) {
 			alert('error signing up');
+			return;
 		}
 
-		const { error_update } = await updateMetaData({ full_name: fullName });
-		if (!error) {
+		// Add additional user details to db
+		console.log('add data', {
+			user_id: data_signup.user.id,
+			full_name: fullName,
+			email: email,
+		});
+		const { error: error_update } = await supabaseClient
+			.from('profile')
+			.insert({
+				user_id: data_signup.user.id,
+				full_name: fullName,
+				email: email,
+			});
+
+		if (!error_signup) {
 			// Redirect user to Dashboard
 			navigateTo('/');
 		}
