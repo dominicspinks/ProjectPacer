@@ -12,6 +12,7 @@ const AuthContext = createContext({
 
 export const AuthProvider = ({ children }) => {
 	const [user, setUser] = useState();
+	const [userDetails, setUserDetails] = useState({});
 	const [session, setSession] = useState();
 	const [loading, setLoading] = useState(true);
 
@@ -25,9 +26,7 @@ export const AuthProvider = ({ children }) => {
 			setSession(session);
 
 			// Get full profile for user
-			const userData = await userAPI.getUserDetails(session?.user.id);
-			console.log('userDatat', userData);
-			const user = { ...session?.user, ...userData };
+
 			setUser(user);
 			setLoading(false);
 		};
@@ -47,9 +46,25 @@ export const AuthProvider = ({ children }) => {
 		};
 	}, []);
 
+	useEffect(() => {
+		if (!user) return;
+		async function getUserDetails() {
+			const userDetails = await userAPI.getUserDetails(user.id);
+			console.log(userDetails);
+			setUserDetails({ ...userDetails });
+		}
+		getUserDetails();
+	}, [user]);
+
 	const value = {
 		session,
 		user,
+		userDetails,
+		signUp: (data) => supabaseClient.auth.signUp(data),
+		signIn: (data) => supabaseClient.auth.signInWithPassword(data),
+		updateUserData: (data) => supabaseClient.auth.updateUser({ data }),
+		updateMetaData: (data) =>
+			supabaseClient.auth.updateUser({ data: data }),
 		signOut: () => supabaseClient.auth.signOut(),
 	};
 

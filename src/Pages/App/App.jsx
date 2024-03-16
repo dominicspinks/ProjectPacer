@@ -4,7 +4,6 @@ import { useAuth } from '../../contexts/AuthProvider';
 
 // Components
 import ProtectedRoute from '../../components/ProtectedRoute/ProtectedRoute';
-import CompletedProfile from '../../components/CompleteProfile/CompleteProfile';
 
 // APIs
 import * as ProjectAPI from '../../utilities/project-api';
@@ -26,8 +25,9 @@ function App() {
 
 	// temporary
 	useEffect(() => {
+		if (!user) return;
 		getProjects();
-	}, []);
+	}, [user]);
 
 	async function getProjects() {
 		console.log('user', user, user.id);
@@ -48,9 +48,7 @@ function App() {
 						path='/projects'
 						element={
 							<ProtectedRoute>
-								<CompletedProfile>
-									<ProjectsPage projects={projects} />
-								</CompletedProfile>
+								<ProjectsPage projects={projects} />
 							</ProtectedRoute>
 						}
 					/>
@@ -66,9 +64,7 @@ function App() {
 						path='/profile'
 						element={
 							<ProtectedRoute>
-								<CompletedProfile>
-									<ProfilePage />
-								</CompletedProfile>
+								<ProfilePage />
 							</ProtectedRoute>
 						}
 					/>

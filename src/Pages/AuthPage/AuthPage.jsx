@@ -2,8 +2,13 @@ import { useEffect, useState } from 'react';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabaseClient } from '../../config/supabase-client';
+
+import LoginForm from '../../components/LoginForm/LoginForm';
+import SignupForm from '../../components/SignupForm/SignupForm';
+
 export default function AuthPage() {
 	const [session, setSession] = useState();
+	const [signup, setSignup] = useState(false);
 
 	useEffect(() => {
 		supabaseClient.auth.getSession().then(({ data: { session } }) => {
@@ -17,15 +22,10 @@ export default function AuthPage() {
 
 	return (
 		<>
-			{!session ? (
-				<Auth
-					supabaseClient={supabaseClient}
-					appearance={{ theme: ThemeSupa }}
-					providers={[]}
-					redirectTo='http://localhost:5173/projects'
-				/>
+			{signup ? (
+				<SignupForm setSignup={setSignup} />
 			) : (
-				<div>Welcome {session.user.email}</div>
+				<LoginForm setSignup={setSignup} />
 			)}
 		</>
 	);
