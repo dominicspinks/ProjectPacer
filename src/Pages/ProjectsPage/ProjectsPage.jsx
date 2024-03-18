@@ -7,28 +7,34 @@ import ProjectList from '../../components/ProjectList/ProjectList';
 // APIs
 import * as ProjectAPI from '../../utilities/project-api';
 
-export default function ProjectsPage() {
-	const [ projects, setProjects] = useState([])
-	
-	const { user } = useAuth();
+export default function ProjectsPage({ projectNames }) {
+    const [projects, setProjects] = useState([]);
 
-	useEffect(() => {
-		if (!user) return;
-		getProjectDetails();
-	}, [user]);
-	
-	async function getProjectDetails() {
-		console.log('user', user, user.id);
-		const { projects } = await ProjectAPI.getProjectDetails(user.id);
-		setProjects(projects);
-	}
-	
-	console.log('projects page, projects',projects);
+    const { user } = useAuth();
 
-	return (
-		<>
-			<h1>My Projects</h1>
-			<ProjectList projects={projects} />
-		</>
-	);
+    useEffect(() => {
+        if (!user) return;
+        getProjectDetails();
+    }, [user]);
+
+    async function getProjectDetails() {
+        console.log(
+            'projectNames',
+            projectNames.map((project) => project.id)
+        );
+        const { projects } = await ProjectAPI.getProjectDetails(
+            projectNames.map((project) => project.id)
+        );
+        console.log('projects', projects);
+        setProjects(projects);
+    }
+
+    console.log('projects page, projects', projects);
+
+    return (
+        <>
+            <h1>My Projects</h1>
+            <ProjectList projects={projects} />
+        </>
+    );
 }

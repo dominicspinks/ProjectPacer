@@ -19,60 +19,60 @@ import EditProfilePage from '../EditProfilePage/EditProfilePage';
 import './App.css';
 
 function App() {
-	const [projectNames, setProjectNames] = useState([]);
+    const [projectNames, setProjectNames] = useState([]);
 
-	const { user } = useAuth();
+    const { user } = useAuth();
 
-	// temporary
-	useEffect(() => {
-		if (!user) return;
-		getProjectNames();
-	}, [user]);
+    // temporary
+    useEffect(() => {
+        if (!user) return;
+        getProjectNames();
+    }, [user]);
 
-	async function getProjectNames() {
-		console.log('user', user, user.id);
-		const { projectNames } = await ProjectAPI.getProjectNames(user.id);
-		setProjectNames(projectNames);
-	}
+    async function getProjectNames() {
+        console.log('user', user, user.id);
+        const { projectNames } = await ProjectAPI.getProjectNames(user.id);
+        setProjectNames(projectNames);
+    }
 
-	return (
-		<>
-			<NavBar />
-			<main>
-				<Routes>
-					<Route
-						path='/'
-						element={<Navigate to='/projects' replace />}
-					/>
-					<Route
-						path='/projects'
-						element={
-							<ProtectedRoute>
-								<ProjectsPage />
-							</ProtectedRoute>
-						}
-					/>
-					<Route
-						path='/profile/edit'
-						element={
-							<ProtectedRoute>
-								<EditProfilePage />
-							</ProtectedRoute>
-						}
-					/>
-					<Route
-						path='/profile'
-						element={
-							<ProtectedRoute>
-								<ProfilePage />
-							</ProtectedRoute>
-						}
-					/>
-					<Route path='/auth' element={<AuthPage />} />
-				</Routes>
-			</main>
-		</>
-	);
+    return (
+        <>
+            <NavBar />
+            <main>
+                <Routes>
+                    <Route
+                        path='/'
+                        element={<Navigate to='/projects' replace />}
+                    />
+                    <Route
+                        path='/projects'
+                        element={
+                            <ProtectedRoute>
+                                <ProjectsPage projectNames={projectNames} />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path='/profile/edit'
+                        element={
+                            <ProtectedRoute>
+                                <EditProfilePage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path='/profile'
+                        element={
+                            <ProtectedRoute>
+                                <ProfilePage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route path='/auth' element={<AuthPage />} />
+                </Routes>
+            </main>
+        </>
+    );
 }
 
 export default App;

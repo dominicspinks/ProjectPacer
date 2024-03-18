@@ -24,10 +24,7 @@ export const AuthProvider = ({ children }) => {
 			} = await supabaseClient.auth.getSession();
 			if (error) throw error;
 			setSession(session);
-
-			// Get full profile for user
-
-			setUser(user);
+			setUser(session?.user);
 			setLoading(false);
 		};
 
@@ -48,7 +45,6 @@ export const AuthProvider = ({ children }) => {
 
 	async function getUserDetails() {
 		const userDetails = await userAPI.getUserDetails(user.id);
-		console.log(userDetails);
 		setUserDetails({ ...userDetails });
 	}
 	useEffect(() => {
@@ -65,8 +61,6 @@ export const AuthProvider = ({ children }) => {
 		signUp: (data) => supabaseClient.auth.signUp(data),
 		signIn: (data) => supabaseClient.auth.signInWithPassword(data),
 		updateUserData: (data) => supabaseClient.auth.updateUser({ data }),
-		// updateMetaData: (data) =>
-		// supabaseClient.auth.updateUser({ data: data }),
 		signOut: () => supabaseClient.auth.signOut(),
 	};
 

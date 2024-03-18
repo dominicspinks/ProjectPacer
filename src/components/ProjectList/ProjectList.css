@@ -1,20 +1,40 @@
-.projectListHeader {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
-	padding: 0.5rem;
-	border-bottom: 1px solid grey;
+.projectListFilter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    border-bottom: 1px solid grey;
 }
 
 .field-v {
-	display: flex;
-	flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .field-h {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.projectListItemTeamList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    padding-right: 0.5rem;
+}
+
+.projectListItemTeamLine {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    text-transform: capitalize;
+}
+
+.button-small {
+    margin: 0;
+    padding: 0.1rem 0.25rem;
 }
