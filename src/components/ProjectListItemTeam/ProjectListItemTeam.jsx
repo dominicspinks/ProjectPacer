@@ -4,7 +4,6 @@ export default function ProjectListItemTeam({ members }) {
 	const [expandTeam, setExpandTeam] = useState(false);
 
 	function handleTeamClick() {
-		console.log('handleTeamClick');
 		setExpandTeam(!expandTeam);
 	}
 	// Sort list of members by role [ owner -> manager -> member]

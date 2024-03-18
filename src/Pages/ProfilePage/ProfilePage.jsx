@@ -3,7 +3,7 @@ import { useAuth } from '../../contexts/AuthProvider';
 
 export default function ProfilePage() {
 	const { user, userDetails } = useAuth();
-	console.log('user', user, userDetails);
+
 	return (
 		<>
 			<div className='container'>

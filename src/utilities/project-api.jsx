@@ -10,7 +10,7 @@ export async function getProjectDetails(projectIdList) {
 			`id,name,description,is_archived,project_member!inner(user_id, role_type!inner(role_type, priority), profile!inner(full_name))`
 		)
 		.in('project_member.project_id', projectIdList);
-	console.log('lookup data', data, error);
+	if (error) console.error(error);
 	return { projects: !data || error ? [] : data };
 }
 
@@ -22,7 +22,7 @@ export async function getProjectNames(user_id) {
 		.from('project')
 		.select(`id,name,project_member!inner(user_id)`)
 		.eq('project_member.user_id', user_id);
-	console.log('lookup data', data, error);
+	if (error) console.error(error);
 	return { projectNames: !data || error ? [] : data };
 }
 
@@ -35,7 +35,7 @@ export async function addProject(userId, projectName, projectDescription) {
 		user_id: userId,
 	});
 
-	console.log('add project', data, error);
+	if (error) console.error(error);
 	return {
 		data: !data || error ? { error: error } : { id: data[0].id },
 	};
@@ -47,7 +47,7 @@ export async function archiveProject(projectId) {
 		.from('project')
 		.update({ is_archived: true })
 		.eq('id', projectId);
-	console.log('archive project', data, error);
+	if (error) console.error(error);
 	return {
 		data: !data || error ? { error: error } : { id: data[0].id },
 	};
@@ -59,7 +59,7 @@ export async function unarchiveProject(projectId) {
 		.from('project')
 		.update({ is_archived: false })
 		.eq('id', projectId);
-	console.log('unarchive project', data, error);
+	if (error) console.error(error);
 	return {
 		data: !data || error ? { error: error } : { id: data[0].id },
 	};
@@ -71,7 +71,7 @@ export async function deleteProject(projectId) {
 		.from('project')
 		.delete()
 		.eq('id', projectId);
-	console.log('delete project', data, error);
+	if (error) console.error(error);
 	return {
 		data: !data || error ? { error: error } : { message: 'success' },
 	};

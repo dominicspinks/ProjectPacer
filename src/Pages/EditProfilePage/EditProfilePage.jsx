@@ -40,15 +40,14 @@ export default function EditProfilePage() {
 			full_name: formData.fullName,
 		};
 
-		console.log('profile_data', profile_data, user.id);
 		// const { error: error_user } = await updateUserData(user_data);
 		const { data: data_update, error: error_profile } = await supabaseClient
 			.from('profile')
 			.update(profile_data)
 			.eq('user_id', user.id);
-		console.log('data', data_update, 'error update', error_profile);
 		await getUserDetails();
 		if (!error_profile) {
+			console.error(error_profile);
 			navigateTo('/profile');
 		}
 	}

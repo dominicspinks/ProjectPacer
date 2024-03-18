@@ -31,7 +31,6 @@ function App() {
 	}, [user]);
 
 	async function getProjectNames() {
-		console.log('user', user, user.id);
 		const { projectNames } = await ProjectAPI.getProjectNames(user.id);
 		setProjectNames(projectNames);
 	}

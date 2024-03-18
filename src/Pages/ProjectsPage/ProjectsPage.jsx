@@ -20,7 +20,6 @@ export default function ProjectsPage({ projectNames, reloadProjects }) {
 
 	useEffect(() => {
 		if (!user) return;
-		console.log('run getProjectDetails');
 		getProjectDetails();
 	}, [user, projectNames]);
 
@@ -57,7 +56,7 @@ export default function ProjectsPage({ projectNames, reloadProjects }) {
 			fieldProjectName,
 			fieldProjectDescription
 		);
-		console.log('add project', data, error);
+		if (error) console.error(error);
 		setShowModal(false);
 		reloadProjects();
 		navigateTo(`/projects/${data.id}`);

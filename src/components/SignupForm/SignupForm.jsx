@@ -22,25 +22,19 @@ export default function SignupForm({ setSignup }) {
 		const email = emailRef.current.value;
 		const fullName = fullNameRef.current.value;
 		const password = passwordRef.current.value;
-		console.log();
 
 		const { data: data_signup, error: error_signup } = await signUp({
 			email,
 			password,
 		});
 
-		console.log('data', data_signup, 'error', error_signup);
 		if (error_signup) {
+			console.error(error_signup);
 			alert('error signing up');
 			return;
 		}
 
 		// Add additional user details to db
-		console.log('add data', {
-			user_id: data_signup.user.id,
-			full_name: fullName,
-			email: email,
-		});
 		const { error: error_update } = await supabaseClient
 			.from('profile')
 			.insert({

@@ -23,7 +23,7 @@ export default function LoginForm({ setSignup }) {
 
 		const { error } = await signIn({ email, password });
 
-		console.log(error);
+		if (error) console.error(error);
 		if (error) {
 			alert('error signing in');
 		} else {

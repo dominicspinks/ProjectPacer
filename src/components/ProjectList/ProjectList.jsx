@@ -9,7 +9,6 @@ export default function ProjectList({ projects, reloadProjects }) {
 	const [filterOwner, setFilterOwner] = useState(false);
 	const [filterProjectName, setFilterProjectName] = useState('');
 	const [filteredProjects, setFilteredProjects] = useState([...projects]);
-	console.log('projectlist page - projects', projects);
 	const { user } = useAuth();
 
 	useEffect(() => {

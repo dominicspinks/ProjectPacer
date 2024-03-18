@@ -7,7 +7,6 @@ export async function getUserDetails(userId) {
 		.select('department, full_name')
 		.eq('user_id', userId)
 		.limit(1);
-	console.log('getuserdetails', { ...data[0] });
 	return !data ? {} : { ...data[0] };
 }
 

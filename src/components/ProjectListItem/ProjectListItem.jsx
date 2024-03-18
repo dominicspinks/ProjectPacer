@@ -75,7 +75,6 @@ export default function ProjectListItem({ project, reloadProjects }) {
 	}
 
 	async function handleArchiveButton() {
-		console.log('archive');
 		const { data, error } = await ProjectAPI.archiveProject(project.id);
 		if (error) console.error(error);
 		reloadProjects();
