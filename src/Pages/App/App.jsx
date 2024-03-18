@@ -19,20 +19,20 @@ import EditProfilePage from '../EditProfilePage/EditProfilePage';
 import './App.css';
 
 function App() {
-	const [projects, setProjects] = useState([]);
+	const [projectNames, setProjectNames] = useState([]);
 
 	const { user } = useAuth();
 
 	// temporary
 	useEffect(() => {
 		if (!user) return;
-		getProjects();
+		getProjectNames();
 	}, [user]);
 
-	async function getProjects() {
+	async function getProjectNames() {
 		console.log('user', user, user.id);
-		const { projects } = await ProjectAPI.getProjects(user.id);
-		setProjects(projects);
+		const { projectNames } = await ProjectAPI.getProjectNames(user.id);
+		setProjectNames(projectNames);
 	}
 
 	return (
@@ -48,7 +48,7 @@ function App() {
 						path='/projects'
 						element={
 							<ProtectedRoute>
-								<ProjectsPage projects={projects} />
+								<ProjectsPage />
 							</ProtectedRoute>
 						}
 					/>
