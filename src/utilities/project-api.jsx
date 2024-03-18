@@ -76,3 +76,42 @@ export async function deleteProject(projectId) {
 		data: !data || error ? { error: error } : { message: 'success' },
 	};
 }
+
+// Get a single project
+export async function getProject(userId, projectId) {
+	const { data, error } = await supabaseClient
+		.from('project')
+		.select(
+			'name, description, is_archived, created_at,project_member!inner(user_id, role_type!inner(role_type, priority), profile!inner(full_name))'
+		)
+		.eq('id', projectId)
+		.limit(1);
+
+	// Check if the user was allow to access this project
+	if (error || data.length === 0) {
+		console.error(error);
+		return { error: error };
+	}
+	return {
+		data: { ...data[0] },
+	};
+}
+
+// Remove a member from a project
+export async function removeProjectMember(projectId, userId) {
+	console.log('projectId', projectId, 'userId', userId);
+	// Need to work out how to join in a delete statement, rather than use '1' for the role_id, preferably it would search by role_type='owner'
+	const { data, error } = await supabaseClient
+		.from('project_member')
+		.delete()
+		.neq('role_id', 1)
+		.eq('project_id', projectId)
+		.eq('user_id', userId);
+	if (error) {
+		console.error(error);
+		return { error: error };
+	}
+	return {
+		data: { message: 'success' },
+	};
+}

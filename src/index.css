@@ -106,21 +106,30 @@ html {
 	}
 }
 
+#root {
+	padding: 0;
+	margin: 0;
+}
+
 body {
 	font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
 		'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
 		'Helvetica Neue', 'Segoe UI Emoji', 'Apple Color Emoji',
 		'Noto Color Emoji', sans-serif;
 	line-height: 1.4;
-	max-width: 800px;
-	margin: 20px auto;
-	padding: 0 10px;
+	margin: 0;
+	padding: 0;
 	word-wrap: break-word;
 	color: #363636;
 	color: var(--text-main);
 	background: #fff;
 	background: var(--background-body);
 	text-rendering: optimizeLegibility;
+}
+
+main {
+	margin: 20px auto;
+	max-width: 800px;
 }
 
 @media (prefers-color-scheme: dark) {

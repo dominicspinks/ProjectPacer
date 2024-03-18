@@ -50,7 +50,7 @@ function App() {
 						element={<Navigate to='/projects' replace />}
 					/>
 					<Route
-						path='/projects/:id'
+						path='/projects/:projectId'
 						element={
 							<ProtectedRoute>
 								<ProjectDetailsPage />
