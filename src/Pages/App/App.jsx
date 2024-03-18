@@ -36,6 +36,11 @@ function App() {
 		setProjectNames(projectNames);
 	}
 
+	// Function to pass to components to regenerate the project list after a change
+	function reloadProjects() {
+		getProjectNames();
+	}
+
 	return (
 		<>
 			<NavBar />
@@ -57,7 +62,10 @@ function App() {
 						path='/projects'
 						element={
 							<ProtectedRoute>
-								<ProjectsPage projectNames={projectNames} />
+								<ProjectsPage
+									projectNames={projectNames}
+									reloadProjects={reloadProjects}
+								/>
 							</ProtectedRoute>
 						}
 					/>

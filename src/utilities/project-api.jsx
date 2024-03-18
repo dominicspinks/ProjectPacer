@@ -28,6 +28,7 @@ export async function getProjectNames(user_id) {
 
 // Add new project to database
 export async function addProject(userId, projectName, projectDescription) {
+	// Call a procedure in supabase that inserts the line into project and project_member tables (as the owner)
 	const { data, error } = await supabaseClient.rpc('add_new_project', {
 		name: projectName,
 		description: projectDescription,
@@ -37,5 +38,41 @@ export async function addProject(userId, projectName, projectDescription) {
 	console.log('add project', data, error);
 	return {
 		data: !data || error ? { error: error } : { id: data[0].id },
+	};
+}
+
+// Set a project status to 'archived'
+export async function archiveProject(projectId) {
+	const { data, error } = await supabaseClient
+		.from('project')
+		.update({ is_archived: true })
+		.eq('id', projectId);
+	console.log('archive project', data, error);
+	return {
+		data: !data || error ? { error: error } : { id: data[0].id },
+	};
+}
+
+// Set a project status to 'active'
+export async function unarchiveProject(projectId) {
+	const { data, error } = await supabaseClient
+		.from('project')
+		.update({ is_archived: false })
+		.eq('id', projectId);
+	console.log('unarchive project', data, error);
+	return {
+		data: !data || error ? { error: error } : { id: data[0].id },
+	};
+}
+
+// Delete a project
+export async function deleteProject(projectId) {
+	const { data, error } = await supabaseClient
+		.from('project')
+		.delete()
+		.eq('id', projectId);
+	console.log('delete project', data, error);
+	return {
+		data: !data || error ? { error: error } : { message: 'success' },
 	};
 }

@@ -8,7 +8,7 @@ import ProjectList from '../../components/ProjectList/ProjectList';
 // APIs
 import * as ProjectAPI from '../../utilities/project-api';
 
-export default function ProjectsPage({ projectNames }) {
+export default function ProjectsPage({ projectNames, reloadProjects }) {
 	const [projects, setProjects] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [fieldProjectName, setFieldProjectName] = useState('');
@@ -59,6 +59,7 @@ export default function ProjectsPage({ projectNames }) {
 		);
 		console.log('add project', data, error);
 		setShowModal(false);
+		reloadProjects();
 		navigateTo(`/projects/${data.id}`);
 	}
 
@@ -97,7 +98,7 @@ export default function ProjectsPage({ projectNames }) {
 					New Project
 				</button>
 			</div>
-			<ProjectList projects={projects} />
+			<ProjectList projects={projects} reloadProjects={reloadProjects} />
 			{/* Model sourced from https://www.creative-tim.com/learning-lab/tailwind-starter-kit/documentation/react/modals/regular */}
 			{showModal ? (
 				<>

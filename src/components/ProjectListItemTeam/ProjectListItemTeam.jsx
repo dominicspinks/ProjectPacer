@@ -1,8 +1,6 @@
 import { useState } from 'react';
 
 export default function ProjectListItemTeam({ members }) {
-	console.log('list item team', members);
-
 	const [expandTeam, setExpandTeam] = useState(false);
 
 	function handleTeamClick() {
@@ -21,14 +19,14 @@ export default function ProjectListItemTeam({ members }) {
 					<div className='projectListItemTeamLine'>
 						<div>{members[0].profile.full_name}</div>
 						<div>
-							[{members[0].role_type.role_type}]{' '}
 							{members.length > 1 && (
 								<button
 									className='button button-small'
 									onClick={handleTeamClick}>
 									{expandTeam ? '-' : '+'}
 								</button>
-							)}
+							)}{' '}
+							[{members[0].role_type.role_type}]
 						</div>
 					</div>
 				</li>

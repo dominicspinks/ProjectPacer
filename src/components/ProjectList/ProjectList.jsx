@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthProvider';
 
 import './ProjectList.css';
 
-export default function ProjectList({ projects }) {
+export default function ProjectList({ projects, reloadProjects }) {
 	const [filterProjectStatus, setFilterProjectStatus] = useState('active');
 	const [filterOwner, setFilterOwner] = useState(false);
 	const [filterProjectName, setFilterProjectName] = useState('');
@@ -86,7 +86,7 @@ export default function ProjectList({ projects }) {
 				<div>
 					<label htmlFor='toggleOwner'>
 						Show only projects I own
-					</label>
+					</label>{' '}
 					<input
 						type='checkbox'
 						id='toggleOwner'
@@ -104,7 +104,11 @@ export default function ProjectList({ projects }) {
 				</thead>
 				<tbody>
 					{filteredProjects.map((project) => (
-						<ProjectListItem key={project.id} project={project} />
+						<ProjectListItem
+							key={project.id}
+							project={project}
+							reloadProjects={reloadProjects}
+						/>
 					))}
 				</tbody>
 			</table>
