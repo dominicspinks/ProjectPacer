@@ -18,17 +18,13 @@ export default function MenuDefault({ menuItems }) {
 				</Button>
 			</MenuHandler>
 			<MenuList className='bg-slate-800 p-2'>
-				{menuItems.map((item) => {
-					return item.active ? (
-						<MenuItem
-							className='bg-slate-500 p-2 hover:bg-slate-400'
-							onClick={item.onClick}>
-							{item.name}
-						</MenuItem>
-					) : (
-						''
-					);
-				})}
+				{menuItems.map((item) => (
+					<MenuItem
+						className='bg-slate-500 p-2 hover:bg-slate-400'
+						onClick={item.onClick}>
+						{item.name}
+					</MenuItem>
+				))}
 			</MenuList>
 		</Menu>
 	);

@@ -1,6 +1,9 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Contexts
+import { useAuth } from '../../contexts/AuthProvider';
+
 // API
 import * as ProjectAPI from '../../utilities/project-api';
 
@@ -9,67 +12,84 @@ import ProjectListItemTeam from '../ProjectListItemTeam/ProjectListItemTeam';
 import MenuDefault from '../MenuButton/MenuButton';
 
 export default function ProjectListItem({ project, reloadProjects }) {
+	const { user } = useAuth();
 	const navigateTo = useNavigate();
+	const [loading, setLoading] = useState(true);
 
 	const menuItemsRef = useRef([
 		{
-			name: 'Edit',
+			name: 'View',
 			onClick: () => {
-				handleEditButton();
+				handleViewButton();
 			},
-			active: true,
 		},
-		{
+	]);
+
+	const projectRoleRef = useRef(
+		project.project_member.filter((member) => member.user_id === user.id)[0]
+			.role_type.role_type
+	);
+
+	// menuList archive button
+	if (
+		loading &&
+		['owner', 'manager'].includes(projectRoleRef.current) &&
+		!project.is_archived
+	) {
+		menuItemsRef.current.push({
 			name: 'Archive',
 			onClick: () => {
 				handleArchiveButton();
 			},
-			active: true,
-		},
-		{
+		});
+	}
+
+	// menuList set active button
+	if (
+		loading &&
+		['owner', 'manager'].includes(projectRoleRef.current) &&
+		project.is_archived
+	) {
+		menuItemsRef.current.push({
 			name: 'Set Active',
 			onClick: () => {
 				handleSetActiveButton();
 			},
-			active: false,
-		},
-		{
+		});
+	}
+
+	// menuLust delete button
+	if (loading && ['owner'].includes(projectRoleRef.current)) {
+		menuItemsRef.current.push({
 			name: 'Delete',
 			onClick: () => {
 				handleDeleteButton();
 			},
-			active: true,
-		},
-	]);
-
-	if (project.is_archived) {
-		menuItemsRef.current[1].active = false;
-		menuItemsRef.current[2].active = true;
+		});
 	}
 
-	function handleEditButton() {
-		console.log('edit');
+	if (loading) setLoading(false);
+
+	function handleViewButton() {
 		navigateTo(`/projects/${project.id}`);
 	}
 
 	async function handleArchiveButton() {
 		console.log('archive');
 		const { data, error } = await ProjectAPI.archiveProject(project.id);
-		console.log('archive', data, error);
+		if (error) console.error(error);
 		reloadProjects();
 	}
 
 	async function handleSetActiveButton() {
-		console.log('set active');
 		const { data, error } = await ProjectAPI.unarchiveProject(project.id);
-		console.log('set active', data, error);
+		if (error) console.error(error);
 		reloadProjects();
 	}
 
 	async function handleDeleteButton() {
-		console.log('delete');
 		const { error } = await ProjectAPI.deleteProject(project.id);
-		console.log('delete', error);
+		if (error) console.error(error);
 		reloadProjects();
 	}
 
