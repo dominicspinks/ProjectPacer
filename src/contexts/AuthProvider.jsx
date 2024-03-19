@@ -7,12 +7,15 @@ import * as userAPI from '../utilities/user-api';
 const AuthContext = createContext({
 	session: null,
 	user: null,
+	userDetails: {},
+	userProjectInvites: [],
 	signOut: () => {},
 });
 
 export const AuthProvider = ({ children }) => {
 	const [user, setUser] = useState();
 	const [userDetails, setUserDetails] = useState({});
+	const [userProjectInvites, setUserProjectInvites] = useState([]);
 	const [session, setSession] = useState();
 	const [loading, setLoading] = useState(true);
 
@@ -47,17 +50,36 @@ export const AuthProvider = ({ children }) => {
 		const userDetails = await userAPI.getUserDetails(user.id);
 		setUserDetails({ ...userDetails });
 	}
+
 	useEffect(() => {
 		if (!user) return;
 
 		getUserDetails();
+		getProjectInvites();
 	}, [user]);
+
+	// Get list of invites for a user
+	async function getProjectInvites() {
+		const { data, error } = await supabaseClient
+			.from('project_invite')
+			.select(
+				'id, email, role_type!inner(id, role_type, priority), project!inner(id,name), profile!inner(user_id,full_name)'
+			)
+			.eq('email', user.email);
+		console.log('api - get invites list', data, error);
+		if (error) {
+			console.error(error);
+		}
+		setUserProjectInvites(data);
+	}
 
 	const value = {
 		session,
 		user,
 		userDetails,
+		userProjectInvites,
 		getUserDetails,
+		getProjectInvites,
 		signUp: (data) => supabaseClient.auth.signUp(data),
 		signIn: (data) => supabaseClient.auth.signInWithPassword(data),
 		updateUserData: (data) => supabaseClient.auth.updateUser({ data }),

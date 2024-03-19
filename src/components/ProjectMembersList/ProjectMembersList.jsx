@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+// Contexts
+import { useAuth } from '../../contexts/AuthProvider';
 import { useRoles } from '../../contexts/RoleProvider';
 
 // API
@@ -15,14 +17,27 @@ export default function ProjectMembersList({
 	handleReloadProjectDetails,
 }) {
 	const { roles } = useRoles();
+	const { user } = useAuth();
 
 	const [showModal, setShowModal] = useState(false);
 	const [fieldEmail, setFieldEmail] = useState('');
 	const [fieldRole, setFieldRole] = useState('');
 	const [fieldEmailUnique, setFieldEmailUnique] = useState(true);
 	const [fieldRoleInvalid, setFieldRoleInvalid] = useState(false);
+	const [projectInvites, setProjectInvites] = useState([]);
 
 	console.log('project members list', project.project_member);
+
+	// Load list of invites for the project
+	useEffect(() => {
+		getProjectInvites();
+	}, [project.id]);
+	console.log('project invites', projectInvites);
+	async function getProjectInvites() {
+		const { data, error } = await ProjectAPI.getProjectInvites(project.id);
+		if (error) console.error(error);
+		setProjectInvites(data);
+	}
 
 	// Clear field values when modal is closed
 	useEffect(() => {
@@ -49,6 +64,7 @@ export default function ProjectMembersList({
 		}
 		return true;
 	}
+
 	async function handleInviteMember() {
 		// Check if email address already belongs to the project
 		if (!findEmailInTeam(fieldEmail)) {
@@ -63,11 +79,13 @@ export default function ProjectMembersList({
 		const { data, error } = await ProjectAPI.addProjectMember(
 			project.id,
 			fieldEmail,
-			fieldRole
+			fieldRole,
+			user.id
 		);
 		console.log('project member list - invite member', data, error);
 		setShowModal(false);
 		handleReloadProjectDetails();
+		getProjectInvites();
 	}
 
 	function handleEmailChange(e) {
@@ -83,6 +101,14 @@ export default function ProjectMembersList({
 		console.log(parseInt(e.target.value));
 		setFieldRoleInvalid(false);
 		setFieldRole(parseInt(e.target.value));
+	}
+
+	async function handleRemoveInvite(inviteId) {
+		//
+		const { error } = await ProjectAPI.removeProjectInvite(inviteId);
+
+		if (error) console.error(error);
+		getProjectInvites();
 	}
 
 	return (
@@ -109,6 +135,16 @@ export default function ProjectMembersList({
 								member={member}
 								projectRole={projectRole}
 								handleRemoveMember={handleRemoveMember}
+							/>
+						))}
+						{projectInvites.map((member) => (
+							<ProjectMembersListItem
+								key={member.user_id}
+								member={member}
+								projectRole={projectRole}
+								handleRemoveMember={handleRemoveMember}
+								handleRemoveInvite={handleRemoveInvite}
+								isInvited={true}
 							/>
 						))}
 					</tbody>

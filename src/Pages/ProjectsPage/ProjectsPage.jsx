@@ -15,13 +15,13 @@ export default function ProjectsPage({ projectNames, reloadProjects }) {
 	const [fieldProjectDescription, setFieldProjectDescription] = useState('');
 	const [fieldProjectNameUnique, setFieldProjectNameUnique] = useState(true);
 
-	const { user } = useAuth();
+	const { user, userProjectInvites } = useAuth();
 	const navigateTo = useNavigate();
 
 	useEffect(() => {
 		if (!user) return;
 		getProjectDetails();
-	}, [user, projectNames]);
+	}, [user, userProjectInvites, projectNames]);
 
 	useEffect(() => {
 		if (!showModal) {

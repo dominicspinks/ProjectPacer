@@ -119,7 +119,7 @@ export async function removeProjectMember(projectId, userId) {
 }
 
 // Add a member to a project
-export async function addProjectMember(projectId, email, roleId) {
+export async function addProjectMember(projectId, email, roleId, userId) {
 	// Check if the email belongs to the project
 	// Check if the email belongs to an existing user
 	// If yes, get the user_Id and add to the project
@@ -158,17 +158,12 @@ export async function addProjectMember(projectId, email, roleId) {
 
 	if (find_user && find_user.length > 0) {
 		// User exists already, add to project
+		const { data: insert_member, error: error_insert_member } =
+			await insertProjectMember(projectId, find_user[0].user_id, roleId);
 
-		const { data, error } = await supabaseClient
-			.from('project_member')
-			.insert({
-				project_id: projectId,
-				user_id: find_user[0].user_id,
-				role_id: roleId,
-			});
-		if (error) {
-			console.error(error);
-			return { error: error };
+		if (error_insert_member) {
+			console.error(error_insert_member);
+			return { error: error_insert_member };
 		}
 		return {
 			data: { message: 'success' },
@@ -181,6 +176,7 @@ export async function addProjectMember(projectId, email, roleId) {
 			project_id: projectId,
 			email: email,
 			role_id: roleId,
+			invited_by: userId,
 		});
 	if (error_insert_invite) {
 		console.error(error_insert_invite);
@@ -189,6 +185,56 @@ export async function addProjectMember(projectId, email, roleId) {
 
 	// User doesn't exist, add to invite list
 
+	return {
+		data: { message: 'success' },
+	};
+}
+
+// Insert Project Member
+export async function insertProjectMember(projectId, userId, roleId) {
+	const { data, error } = await supabaseClient.from('project_member').insert({
+		project_id: projectId,
+		user_id: userId,
+		role_id: roleId,
+	});
+	console.log('api - insert project member', data, error);
+	if (error) {
+		console.error(error);
+		return { error: error };
+	}
+	return {
+		data: { message: 'success' },
+	};
+}
+
+// Get list of invites for a project
+export async function getProjectInvites(projectId) {
+	const { data, error } = await supabaseClient
+		.from('project_invite')
+		.select(
+			'id, project_id, email, role_type!inner(id, role_type, priority)'
+		)
+		.eq('project_id', projectId);
+	console.log('api - get invites list', data, error);
+	if (error) {
+		console.error(error);
+		return { error: error };
+	}
+	return {
+		data: data,
+	};
+}
+
+// Delete an invite
+export async function removeProjectInvite(inviteId) {
+	const { data, error } = await supabaseClient
+		.from('project_invite')
+		.delete()
+		.eq('id', inviteId);
+	if (error) {
+		console.error(error);
+		return { error: error };
+	}
 	return {
 		data: { message: 'success' },
 	};
