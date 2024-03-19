@@ -79,15 +79,17 @@ export async function deleteProject(projectId) {
 
 // Get a single project
 export async function getProject(userId, projectId) {
+	console.log('project api', userId, projectId);
 	const { data, error } = await supabaseClient
 		.from('project')
 		.select(
-			'name, description, is_archived, created_at,project_member!inner(user_id, role_type!inner(role_type, priority), profile!inner(full_name))'
+			'id, name, description, is_archived, created_at,project_member!left(user_id, role_type!inner(role_type, priority), profile!inner(full_name, email)),project_invite!left(id, email, role_id)'
 		)
 		.eq('id', projectId)
 		.limit(1);
-
+	console.log('data', data, error);
 	// Check if the user was allow to access this project
+
 	if (error || data.length === 0) {
 		console.error(error);
 		return { error: error };
@@ -111,6 +113,82 @@ export async function removeProjectMember(projectId, userId) {
 		console.error(error);
 		return { error: error };
 	}
+	return {
+		data: { message: 'success' },
+	};
+}
+
+// Add a member to a project
+export async function addProjectMember(projectId, email, roleId) {
+	// Check if the email belongs to the project
+	// Check if the email belongs to an existing user
+	// If yes, get the user_Id and add to the project
+	// If no, add a line in the project_invite table
+	// // When that user signs in they will see the invite in their profile page
+	// // Possibly an email invite can be sent to them to sign up
+	console.log('projectId', projectId, 'email', email, 'roleId', roleId);
+	const { data: check_existing, error: error_check_existing } =
+		await supabaseClient
+			.from('project_member')
+			.select('id,profile!inner(*)')
+			.eq('project_id', projectId)
+			.eq('profile.email', email);
+
+	if (error_check_existing) {
+		console.error(error_check_existing);
+		return { error: error_check_existing };
+	}
+
+	if (check_existing && check_existing.length > 0) {
+		return { error: { message: 'user already in project' } };
+	}
+
+	const { data: find_user, error: error_find_user } = await supabaseClient
+		.from('profile')
+		.select('user_id')
+		.eq('email', email)
+		.limit(1);
+
+	console.log('find_user', find_user, 'error_find_user', error_find_user);
+
+	if (error_find_user) {
+		console.error(error_find_user);
+		return { error: error_find_user };
+	}
+
+	if (find_user && find_user.length > 0) {
+		// User exists already, add to project
+
+		const { data, error } = await supabaseClient
+			.from('project_member')
+			.insert({
+				project_id: projectId,
+				user_id: find_user[0].user_id,
+				role_id: roleId,
+			});
+		if (error) {
+			console.error(error);
+			return { error: error };
+		}
+		return {
+			data: { message: 'success' },
+		};
+	}
+
+	// User doesn't exist, add to invite list
+	const { data: insert_invite, error: error_insert_invite } =
+		await supabaseClient.from('project_invite').insert({
+			project_id: projectId,
+			email: email,
+			role_id: roleId,
+		});
+	if (error_insert_invite) {
+		console.error(error_insert_invite);
+		return { error: error_insert_invite };
+	}
+
+	// User doesn't exist, add to invite list
+
 	return {
 		data: { message: 'success' },
 	};

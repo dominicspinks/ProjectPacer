@@ -23,6 +23,8 @@ export default function ProjectDetailsPage() {
 		const { data, error } = await ProjectAPI.getProject(user.id, projectId);
 		if (error) console.error(error);
 		setProject(data);
+		console.log('details page - project', data);
+		if (!data) return;
 		projectRoleRef.current = data.project_member.filter(
 			(member) => member.user_id === user.id
 		)[0].role_type.role_type;
@@ -38,6 +40,13 @@ export default function ProjectDetailsPage() {
 			userId
 		);
 		console.log('project remove member', data, error);
+		getProjectDetails();
+
+		// If a member removes themselves from a group, they should be navigated back to the project list page
+		// ** TODO **
+	}
+
+	function handleReloadProjectDetails() {
 		getProjectDetails();
 	}
 
@@ -81,8 +90,11 @@ export default function ProjectDetailsPage() {
 							</h2>
 							<ProjectMembersList
 								projectRole={projectRoleRef.current}
-								projectMembers={project.project_member}
+								project={project}
 								handleRemoveMember={handleRemoveMember}
+								handleReloadProjectDetails={
+									handleReloadProjectDetails
+								}
 							/>
 						</div>
 					</div>
