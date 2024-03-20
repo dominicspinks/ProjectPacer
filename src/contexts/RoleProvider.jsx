@@ -12,7 +12,7 @@ export const RoleProvider = ({ children }) => {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		console.log('get roles');
+		// console.log('get roles');
 		getRoles();
 	}, []);
 

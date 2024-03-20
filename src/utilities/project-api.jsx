@@ -239,3 +239,25 @@ export async function removeProjectInvite(inviteId) {
 		data: { message: 'success' },
 	};
 }
+
+// Get list of users belonging to a list of projects
+export async function getProjectMembers(projectIds) {
+	const { data, error } = await supabaseClient
+		.from('project_member')
+		.select('profile!inner(full_name, user_id)', { distinct: true })
+		.in('project_id', projectIds);
+	if (error) {
+		console.error(error);
+		return { error: error };
+	}
+
+	// Get unique list of users
+	const memberMap = new Map();
+	data.forEach((member) =>
+		memberMap.set(member.profile.user_id, member.profile.full_name)
+	);
+
+	return {
+		data: memberMap,
+	};
+}

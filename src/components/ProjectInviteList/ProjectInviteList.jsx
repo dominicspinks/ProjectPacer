@@ -12,8 +12,8 @@ export default function ProjectInvitesList() {
 
 	return (
 		<>
-			<h2 className='font-bold border-b-2 text-left pl-2'>
-				Pending Project Invites
+			<h2 className='font-bold m-2 border-b-2 text-left pl-2'>
+				Project Invites
 			</h2>
 			{userProjectInvites.length > 0 ? (
 				<table>
@@ -35,7 +35,7 @@ export default function ProjectInvitesList() {
 					</tbody>
 				</table>
 			) : (
-				<p>No pending invites</p>
+				<p className='text-left p-2'>No pending invites</p>
 			)}
 		</>
 	);

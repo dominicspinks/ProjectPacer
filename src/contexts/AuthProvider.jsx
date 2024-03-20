@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }) => {
 				'id, email, role_type!inner(id, role_type, priority), project!inner(id,name), profile!inner(user_id,full_name)'
 			)
 			.eq('email', user.email);
-		console.log('api - get invites list', data, error);
+		// console.log('api - get invites list', data, error);
 		if (error) {
 			console.error(error);
 		}

@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthProvider';
 
 // Components
 import ProtectedRoute from '../../components/ProtectedRoute/ProtectedRoute';
+import ChatContainer from '../../components/ChatContainer/ChatContainer';
 
 // APIs
 import * as ProjectAPI from '../../utilities/project-api';
@@ -87,6 +88,9 @@ function App() {
 					<Route path='/auth' element={<AuthPage />} />
 				</Routes>
 			</main>
+			{user && projectNames && (
+				<ChatContainer projectNames={projectNames} />
+			)}
 		</>
 	);
 }
