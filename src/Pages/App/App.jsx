@@ -41,7 +41,7 @@ function App() {
 
 	return (
 		<>
-			{user && <NavBar />}
+			{user && <NavBar setProjectNames={setProjectNames} />}
 			<main className='flex flex-col items-center'>
 				<Routes>
 					<Route

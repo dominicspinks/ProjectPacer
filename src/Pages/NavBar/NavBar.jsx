@@ -2,11 +2,14 @@ import { NavLink } from 'react-router-dom';
 
 import { useAuth } from '../../contexts/AuthProvider';
 
-export default function NavBar({ supabase }) {
+export default function NavBar({ setProjectNames }) {
 	const { user, signOut } = useAuth();
 
 	function handleLogout() {
 		signOut();
+
+		// Clear existing project names
+		setProjectNames([]);
 	}
 
 	return (

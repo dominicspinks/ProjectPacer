@@ -90,7 +90,7 @@ export const AuthProvider = ({ children }) => {
 		signUp: (data) => supabaseClient.auth.signUp(data),
 		signIn: (data) => supabaseClient.auth.signInWithPassword(data),
 		updateUserData: (data) => supabaseClient.auth.updateUser({ data }),
-		signOut: () => supabaseClient.auth.signOut(),
+		signOut,
 	};
 
 	// use a provider to pass down the value
