@@ -17,6 +17,11 @@ export default function NavBar({ setProjectNames }) {
 		<nav className='bg-gray-900 border-gray-700'>
 			<div className='max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2'>
 				<div className='flex items-center space-x-4'>
+					<img
+						alt='image'
+						src='/pp-logo-light.svg'
+						className='w-6 m-2'
+					/>
 					<NavLink
 						to='/projects'
 						className='h-full hover:bg-slate-800 text-align-center px-3 py-2 rounded active:text-blue-500'>
