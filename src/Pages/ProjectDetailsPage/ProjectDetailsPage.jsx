@@ -7,11 +7,14 @@ import * as ProjectAPI from '../../utilities/project-api';
 
 // Components
 import ProjectMembersList from '../../components/ProjectMembersList/ProjectMembersList';
+import SpinnerIcon from '../../components/SpinnerIcon/SpinnerIcon';
 
 export default function ProjectDetailsPage() {
 	const { projectId } = useParams();
 	const { user } = useAuth();
+
 	const [project, setProject] = useState(null);
+	const [loading, setLoading] = useState(true);
 
 	const projectRoleRef = useRef();
 
@@ -32,6 +35,8 @@ export default function ProjectDetailsPage() {
 		projectRoleRef.current = data.project_member.filter(
 			(member) => member.user_id === user.id
 		)[0].role_type.role_type;
+
+		setLoading(false);
 	}
 
 	async function handleRemoveMember(userId) {
@@ -51,6 +56,7 @@ export default function ProjectDetailsPage() {
 
 	return (
 		<>
+			{loading && <SpinnerIcon />}
 			{project && (
 				<div className='block p-6  border  rounded-lg shadow bg-gray-800 border-gray-700'>
 					<h5 className='mb-2 text-2xl font-bold tracking-tight mb-4'>
