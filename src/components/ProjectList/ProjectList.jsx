@@ -72,7 +72,8 @@ export default function ProjectList({
 			<div className='flex justify-between items-center mb-4'>
 				<select
 					name='projectStatus'
-					onChange={handleProjectStatusChange}>
+					onChange={handleProjectStatusChange}
+					className='pr-10'>
 					<option value='active'>Active</option>
 					<option value='archived'>Archived</option>
 				</select>

@@ -314,7 +314,6 @@ export default function ChatContainer({ projectNames }) {
 								}
 							}}
 							onInput={(e) => {
-								console.log(e.target.scrollHeight);
 								e.target.style.height = '2.5rem';
 								e.target.style.height =
 									e.target.scrollHeight + 'px';
