@@ -73,6 +73,13 @@ export const AuthProvider = ({ children }) => {
 		setUserProjectInvites(data);
 	}
 
+	function signOut() {
+		supabaseClient.auth.signOut();
+		setUser(null);
+		setUserDetails({});
+		setUserProjectInvites([]);
+	}
+
 	const value = {
 		session,
 		user,

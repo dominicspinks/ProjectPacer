@@ -17,9 +17,8 @@ export default function ProjectListItem({ project, reloadProjects }) {
 	const [loading, setLoading] = useState(true);
 
 	const projectRoleRef = useRef(
-		project?.project_member.filter(
-			(member) => member.user_id === user.id
-		)[0].role_type?.role_type ?? ''
+		project?.project_member?.find((member) => member.user_id === user.id)
+			?.role_type?.role_type ?? ''
 	);
 
 	const menuItemsRef = useRef([

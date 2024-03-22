@@ -17,9 +17,6 @@ import ProfilePage from '../ProfilePage/ProfilePage';
 import EditProfilePage from '../EditProfilePage/EditProfilePage';
 import ProjectDetailsPage from '../ProjectDetailsPage/ProjectDetailsPage';
 
-// Styles
-import './App.css';
-
 function App() {
 	const { user } = useAuth();
 
