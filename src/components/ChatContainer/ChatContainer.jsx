@@ -236,7 +236,7 @@ export default function ChatContainer({ projectNames }) {
 						: ''
 				}`}>
 				<div
-					className={`bg-slate-200 flex gap-2 justify-between align-middle p-2 h-16 transition ease-in-out delay-150 ${
+					className={`bg-slate-300 flex gap-2 justify-between align-middle p-2 h-16 transition ease-in-out delay-150 ${
 						!showMessages ? 'rounded-full ' : ' rounded-t-lg'
 					}`}>
 					<div
@@ -286,7 +286,7 @@ export default function ChatContainer({ projectNames }) {
 					}`}>
 					<div
 						id='messageList'
-						className='flex flex-col-reverse overflow-y-scroll gap-2 p-2 max-h-72 min-h-36 overscroll-contain max-w-96 bg-slate-400 border-2 border-slate-200'>
+						className='flex flex-col-reverse overflow-y-scroll gap-2 p-2 max-h-72 min-h-36 overscroll-contain max-w-96 bg-slate-400 border-2 border-l-0 border-y-0 border-r-slate-300'>
 						{filteredMessages.length === 0 && <p>No messages</p>}
 						{filteredMessages.map((message) => (
 							<ChatMessage
@@ -299,7 +299,7 @@ export default function ChatContainer({ projectNames }) {
 					<form
 						id='messageInput'
 						onSubmit={sendMessage}
-						className='flex gap-2 justify-around items-end p-2 bg-slate-200 rounded-bl-lg'>
+						className='flex gap-2 justify-around items-end p-2 bg-slate-300 rounded-bl-lg'>
 						<textarea
 							value={fieldMessage}
 							onChange={handleMessageChange}

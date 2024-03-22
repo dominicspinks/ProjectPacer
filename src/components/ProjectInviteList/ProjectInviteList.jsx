@@ -4,15 +4,12 @@ import { useAuth } from '../../contexts/AuthProvider';
 // Components
 import ProjectInviteListItem from '../ProjectInviteListItem/ProjectInviteListItem';
 
-export default function ProjectInvitesList() {
-	const { user, userDetails, userProjectInvites, getProjectInvites } =
-		useAuth();
-
-	console.log('invites list', userProjectInvites);
+export default function ProjectInvitesList({ reloadProjects }) {
+	const { userProjectInvites } = useAuth();
 
 	return (
-		<>
-			<h2 className='font-bold m-2 border-b-2 text-left pl-2'>
+		<div className='mt-10'>
+			<h2 className='italic border-b-2 text-left pl-2 mb-2'>
 				Project Invites
 			</h2>
 			{userProjectInvites.length > 0 ? (
@@ -30,6 +27,7 @@ export default function ProjectInvitesList() {
 							<ProjectInviteListItem
 								key={invite.id}
 								invite={invite}
+								reloadProjects={reloadProjects}
 							/>
 						))}
 					</tbody>
@@ -37,6 +35,6 @@ export default function ProjectInvitesList() {
 			) : (
 				<p className='text-left p-2'>No pending invites</p>
 			)}
-		</>
+		</div>
 	);
 }

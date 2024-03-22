@@ -39,8 +39,13 @@ export default function ProjectMembersListItem({
 
 	return (
 		<tr>
-			<td>{!isInvited ? member.profile.full_name : member.email}</td>
-			<td className='capitalize'>{member.role_type.role_type}</td>
+			<td className={`${isInvited ? 'italic' : ''}`}>
+				{!isInvited ? member.profile.full_name : member.email}
+			</td>
+			<td className='capitalize'>
+				{member.role_type.role_type}
+				{isInvited && <span className='italic'> [invited]</span>}
+			</td>
 			<td>
 				<MenuButton menuItems={menuItemsRef.current} />
 			</td>

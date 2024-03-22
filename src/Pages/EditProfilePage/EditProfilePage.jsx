@@ -4,10 +4,12 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { supabaseClient } from '../../config/supabase-client';
 
 // APIs
-import * as userAPI from '../../utilities/user-api';
+import * as UserAPI from '../../utilities/user-api';
 
 export default function EditProfilePage() {
 	const { user, userDetails, getUserDetails } = useAuth();
+	const navigateTo = useNavigate();
+
 	const [formData, setFormData] = useState({
 		fullName:
 			!userDetails || userDetails.full_name === null
@@ -20,8 +22,6 @@ export default function EditProfilePage() {
 		email: user.user_metadata.email,
 	});
 
-	const navigateTo = useNavigate();
-
 	function handleChange(e) {
 		const { name, value } = e.target;
 		setFormData({ ...formData, [name]: value });
@@ -30,91 +30,85 @@ export default function EditProfilePage() {
 	async function handleSubmit(e) {
 		e.preventDefault();
 
-		// const user_data = {
-		// 	user_id: user.id,
-		// 	full_name: formData.fullName,
-		// };
 		const profile_data = {
-			department: formData.department,
-			email: formData.email,
+			user_id: user.id,
 			full_name: formData.fullName,
+			department: formData.department,
 		};
 
-		// const { error: error_user } = await updateUserData(user_data);
-		const { data: data_update, error: error_profile } = await supabaseClient
-			.from('profile')
-			.update(profile_data)
-			.eq('user_id', user.id);
-		await getUserDetails();
-		if (!error_profile) {
-			console.error(error_profile);
-			navigateTo('/profile');
+		const { error } = await UserAPI.updateUserDetails(profile_data);
+
+		if (error) {
+			console.error(error);
+			return;
 		}
+		getUserDetails();
+		navigateTo('/profile');
 	}
 
 	return (
-		<>
-			<div className='container'>
-				<form>
-					<div className='field'>
-						<label htmlFor='fullName' className='label'>
-							Full Name:
-						</label>
-						<input
-							className='input input-text'
-							type='text'
-							id='fullName'
-							name='fullName'
-							required
-							value={formData.fullName}
-							onChange={handleChange}
-						/>
-					</div>
-					<div className='field'>
-						<label htmlFor='email' className='label'>
-							Email:
-						</label>
-						<input
-							className='input input-email'
-							type='email'
-							id='email'
-							name='email'
-							required
-							value={formData.email}
-							onChange={handleChange}
-							disabled
-						/>
-					</div>
-					<div className='field'>
-						<span>
-							<label htmlFor='department' className='label'>
-								Department:
-							</label>
-							<input
-								className='input input-text'
-								type='text'
-								id='department'
-								name='department'
-								required
-								value={formData.department}
-								onChange={handleChange}
-							/>
-						</span>
-					</div>
-
+		<div className='block p-6  border  rounded-lg shadow bg-gray-800 border-gray-700'>
+			<h5 className='mb-2 text-2xl font-bold tracking-tight mb-4'>
+				Edit Profile
+			</h5>
+			<form className='flex flex-col gap-4'>
+				<div className='flex gap-4 items-center justify-between'>
+					<label htmlFor='fullName' className='font-bold'>
+						Full Name:
+					</label>
+					<input
+						className='w-72'
+						type='text'
+						id='fullName'
+						name='fullName'
+						required
+						value={formData.fullName}
+						onChange={handleChange}
+					/>
+				</div>
+				<div className='flex gap-4 items-center justify-between'>
+					<label htmlFor='email' className='font-bold'>
+						Email:
+					</label>
+					<input
+						className='w-72'
+						type='email'
+						id='email'
+						name='email'
+						required
+						value={formData.email}
+						onChange={handleChange}
+						disabled
+					/>
+				</div>
+				<div className='flex gap-4 items-center justify-between'>
+					<label htmlFor='department' className='font-bold'>
+						Department:
+					</label>
+					<input
+						className='w-72'
+						type='text'
+						id='department'
+						name='department'
+						required
+						value={formData.department}
+						onChange={handleChange}
+					/>
+				</div>
+				<div className='flex gap-4 items-center justify-center'>
 					<Link to='/profile'>
-						<button className='button button-primary'>
+						<button className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded'>
 							Cancel
 						</button>
 					</Link>
 
 					<button
-						className='button button-primary'
+						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
 						onClick={handleSubmit}>
 						Submit
 					</button>
-				</form>
-			</div>
-		</>
+				</div>
+			</form>
+		</div>
 	);
 }

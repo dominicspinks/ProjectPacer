@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 
 // Contexts
 import { useAuth } from '../../contexts/AuthProvider';
@@ -9,10 +9,7 @@ import * as ProjectAPI from '../../utilities/project-api';
 // Components
 import MenuButton from '../MenuButton/MenuButton';
 
-export default function ProjectInviteListItem({ invite }) {
-	console.log('invite list item', invite);
-	const [loading, setLoading] = useState(true);
-
+export default function ProjectInviteListItem({ invite, reloadProjects }) {
 	const { user, getProjectInvites } = useAuth();
 
 	const menuItemsRef = useRef([
@@ -31,32 +28,31 @@ export default function ProjectInviteListItem({ invite }) {
 	]);
 
 	async function handleAcceptButton() {
-		console.log('accept button');
 		const { error: error_insert_member } =
 			await ProjectAPI.insertProjectMember(
 				invite.project.id,
 				user.id,
 				invite.role_type.id
 			);
-		console.log('error', error_insert_member);
+
 		if (error_insert_member) {
 			console.error(error_insert_member);
 			return;
 		}
+
 		// Remove invite
-		console.log('remove invite');
 		const { error: error_remove_invite } =
 			await ProjectAPI.removeProjectInvite(invite.id);
+
 		if (error_remove_invite) {
 			console.error(error_remove_invite);
 			return;
 		}
 		getProjectInvites();
+		reloadProjects();
 	}
 
 	async function handleDeclineButton() {
-		console.log('decline button');
-
 		const { error } = await ProjectAPI.removeProjectInvite(invite.id);
 		if (error) {
 			console.error(error);

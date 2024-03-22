@@ -11,19 +11,19 @@ import MenuIcon from '../MenuIcon/MenuIcon';
 
 export default function MenuDefault({ menuItems }) {
 	return (
-		<Menu>
+		<Menu placement='right-start'>
 			{menuItems && menuItems.length > 0 && (
 				<>
 					<MenuHandler>
-						<Button className='m-0 p-2'>
+						<Button className='m-0 p-0'>
 							<MenuIcon />
 						</Button>
 					</MenuHandler>
-					<MenuList className='bg-slate-800 p-2'>
+					<MenuList className='bg-slate-500 border-none rounded-lg'>
 						{menuItems.map((item) => (
 							<MenuItem
 								key={item.name}
-								className='bg-slate-500 p-2 hover:bg-slate-400'
+								className='bg-transparent p-2 hover:bg-slate-400'
 								onClick={item.onClick}>
 								{item.name}
 							</MenuItem>

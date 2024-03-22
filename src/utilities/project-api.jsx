@@ -107,7 +107,7 @@ export async function getProject(userId, projectId) {
 export async function removeProjectMember(projectId, userId) {
 	console.log('projectId', projectId, 'userId', userId);
 	// Need to work out how to join in a delete statement, rather than use '1' for the role_id, preferably it would search by role_type='owner'
-	const { data, error } = await supabaseClient
+	const { error } = await supabaseClient
 		.from('project_member')
 		.delete()
 		.neq('role_id', 1)
@@ -125,8 +125,6 @@ export async function removeProjectMember(projectId, userId) {
 // Add a member to a project
 export async function addProjectMember(projectId, email, roleId, userId) {
 	// Check if the email belongs to the project
-	// Check if the email belongs to an existing user
-	// If yes, get the user_Id and add to the project
 	// If no, add a line in the project_invite table
 	// // When that user signs in they will see the invite in their profile page
 	// // Possibly an email invite can be sent to them to sign up
@@ -147,36 +145,10 @@ export async function addProjectMember(projectId, email, roleId, userId) {
 		return { error: { message: 'user already in project' } };
 	}
 
-	const { data: find_user, error: error_find_user } = await supabaseClient
-		.from('profile')
-		.select('user_id')
-		.eq('email', email)
-		.limit(1);
-
-	console.log('find_user', find_user, 'error_find_user', error_find_user);
-
-	if (error_find_user) {
-		console.error(error_find_user);
-		return { error: error_find_user };
-	}
-
-	if (find_user && find_user.length > 0) {
-		// User exists already, add to project
-		const { data: insert_member, error: error_insert_member } =
-			await insertProjectMember(projectId, find_user[0].user_id, roleId);
-
-		if (error_insert_member) {
-			console.error(error_insert_member);
-			return { error: error_insert_member };
-		}
-		return {
-			data: { message: 'success' },
-		};
-	}
-
 	// User doesn't exist, add to invite list
-	const { data: insert_invite, error: error_insert_invite } =
-		await supabaseClient.from('project_invite').insert({
+	const { error: error_insert_invite } = await supabaseClient
+		.from('project_invite')
+		.insert({
 			project_id: projectId,
 			email: email,
 			role_id: roleId,
@@ -186,8 +158,6 @@ export async function addProjectMember(projectId, email, roleId, userId) {
 		console.error(error_insert_invite);
 		return { error: error_insert_invite };
 	}
-
-	// User doesn't exist, add to invite list
 
 	return {
 		data: { message: 'success' },
