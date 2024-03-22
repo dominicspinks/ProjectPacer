@@ -1,9 +1,10 @@
 import { NavLink } from 'react-router-dom';
 
+// Contexts
 import { useAuth } from '../../contexts/AuthProvider';
 
 export default function NavBar({ setProjectNames }) {
-	const { user, signOut } = useAuth();
+	const { signOut } = useAuth();
 
 	function handleLogout() {
 		signOut();

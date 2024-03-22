@@ -25,3 +25,4 @@ dist-ssr
 .env
 
 planning.md
+.eslintrc.cjs
