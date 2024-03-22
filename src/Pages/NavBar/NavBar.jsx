@@ -10,7 +10,7 @@ export default function NavBar({ supabase }) {
 	}
 
 	return (
-		<nav className='bg-slate-900 border-gray-700'>
+		<nav className='bg-gray-900 border-gray-700'>
 			<div className='max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2'>
 				<div className='flex items-center space-x-4'>
 					<NavLink

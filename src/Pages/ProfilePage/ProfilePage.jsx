@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 // Contexts
@@ -8,8 +8,7 @@ import { useAuth } from '../../contexts/AuthProvider';
 import ProjectInviteList from '../../components/ProjectInviteList/ProjectInviteList';
 
 export default function ProfilePage({ reloadProjects }) {
-	const { user, userDetails, userProjectInvites, getProjectInvites } =
-		useAuth();
+	const { user, userDetails, getProjectInvites } = useAuth();
 
 	// get project invites for the user
 	useEffect(() => {
@@ -17,7 +16,6 @@ export default function ProfilePage({ reloadProjects }) {
 		getProjectInvites();
 	}, [user]);
 
-	console.log(userDetails, !userDetails.department);
 	return (
 		<div className='block p-6 border rounded-lg shadow bg-gray-800 border-gray-700 w-full'>
 			<h5 className='mb-2 text-2xl font-bold tracking-tight mb-4'>

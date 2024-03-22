@@ -149,7 +149,6 @@ export default function ChatContainer({ projectNames }) {
 
 	// Get existing messages for the user's projects
 	async function getMessages() {
-		console.log('getMessages');
 		if (projectNames.length === 0 || !user || !loadingMessages) return;
 		const { data, error } = await MessageAPI.getMessages(projectNames);
 		if (error) {
@@ -157,7 +156,6 @@ export default function ChatContainer({ projectNames }) {
 			return { error: error };
 		}
 		setMessages(data);
-		console.log('get messages', typeof data, data);
 
 		// Filter messages by the selected project
 		filterByProjectId(data);
@@ -166,13 +164,11 @@ export default function ChatContainer({ projectNames }) {
 
 	function filterByProjectId(data) {
 		// Filter messages by the selected project
-		console.log('filter by project id', data);
 		setFilteredMessages([
 			...data.filter(
 				(message) => message.project_id === parseInt(fieldProjectId)
 			),
 		]);
-		console.log('filtered messages', filteredMessages);
 	}
 
 	async function sendMessage(e) {

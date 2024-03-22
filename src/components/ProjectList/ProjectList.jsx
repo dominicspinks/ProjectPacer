@@ -4,7 +4,11 @@ import { useAuth } from '../../contexts/AuthProvider';
 
 import './ProjectList.css';
 
-export default function ProjectList({ projects, reloadProjects }) {
+export default function ProjectList({
+	projects,
+	reloadProjects,
+	setShowModal,
+}) {
 	const [filterProjectStatus, setFilterProjectStatus] = useState('active');
 	const [filterOwner, setFilterOwner] = useState(false);
 	const [filterProjectName, setFilterProjectName] = useState('');
@@ -64,15 +68,15 @@ export default function ProjectList({ projects, reloadProjects }) {
 	}
 
 	return (
-		<div className='container'>
-			<div className='projectListFilter'>
+		<>
+			<div className='flex justify-between items-center mb-4'>
 				<select
 					name='projectStatus'
 					onChange={handleProjectStatusChange}>
 					<option value='active'>Active</option>
 					<option value='archived'>Archived</option>
 				</select>
-				<div className='field-h'>
+				<div className='flex gap-4 items-center justify-between'>
 					<label htmlFor='projectName'>Project Name</label>
 					<input
 						type='text'
@@ -82,7 +86,7 @@ export default function ProjectList({ projects, reloadProjects }) {
 						value={filterProjectName}
 					/>
 				</div>
-				<div>
+				<div className='flex gap-2 items-center'>
 					<label htmlFor='toggleOwner'>
 						Show only projects I own
 					</label>{' '}
@@ -98,7 +102,13 @@ export default function ProjectList({ projects, reloadProjects }) {
 					<tr>
 						<th>Name</th>
 						<th>Team</th>
-						<th></th>
+						<th>
+							<button
+								className='bg-blue-500 text-sm  hover:bg-blue-700 text-white font-bold py-1 px-2 rounded'
+								onClick={() => setShowModal(true)}>
+								New Project
+							</button>
+						</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -111,6 +121,6 @@ export default function ProjectList({ projects, reloadProjects }) {
 					))}
 				</tbody>
 			</table>
-		</div>
+		</>
 	);
 }

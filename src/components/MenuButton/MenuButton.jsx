@@ -19,11 +19,11 @@ export default function MenuDefault({ menuItems }) {
 							<MenuIcon />
 						</Button>
 					</MenuHandler>
-					<MenuList className='bg-slate-500 border-none rounded-lg'>
+					<MenuList className='bg-slate-500 border-none rounded-lg text-white'>
 						{menuItems.map((item) => (
 							<MenuItem
 								key={item.name}
-								className='bg-transparent p-2 hover:bg-slate-400'
+								className='bg-transparent p-2 hover:bg-slate-400 hover:text-grey-600 rounded'
 								onClick={item.onClick}>
 								{item.name}
 							</MenuItem>

@@ -16,7 +16,6 @@ export default function ProjectListItem({ project, reloadProjects }) {
 	const navigateTo = useNavigate();
 	const [loading, setLoading] = useState(true);
 
-	console.log('project', project);
 	const projectRoleRef = useRef(
 		project?.project_member.filter(
 			(member) => member.user_id === user.id

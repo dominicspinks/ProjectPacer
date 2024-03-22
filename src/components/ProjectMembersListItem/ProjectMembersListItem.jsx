@@ -10,7 +10,6 @@ export default function ProjectMembersListItem({
 	handleRemoveInvite = () => {},
 	isInvited = false,
 }) {
-	console.log('member list item', member);
 	const [loading, setLoading] = useState(true);
 
 	const menuItemsRef = useRef([]);
