@@ -1,15 +1,32 @@
-import { useRef } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../contexts/AuthProvider';
-import { supabaseClient } from '../../config/supabase-client';
+
+// API
+import * as UserAPI from '../../utilities/user-api';
+
+// Icons
+import {
+	EnvelopeIcon,
+	UserIcon,
+	EyeSlashIcon,
+	EyeIcon,
+	KeyIcon,
+} from '@heroicons/react/24/solid';
 
 export default function SignupForm({ setSignup }) {
-	const emailRef = useRef();
-	const fullNameRef = useRef();
-	const passwordRef = useRef();
+	const { signUp } = useAuth();
 
-	const { signUp, updateMetaData } = useAuth();
+	const [showPassword, setShowPassword] = useState(false);
+	const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+
+	const [fieldName, setFieldName] = useState('');
+	const [fieldEmail, setFieldEmail] = useState('');
+	const [fieldPassword, setFieldPassword] = useState('');
+	const [fieldPasswordConfirm, setFieldPasswordConfirm] = useState('');
+	const [passwordsMatch, setPasswordsMatch] = useState(true);
+
 	const navigateTo = useNavigate();
 	function handleSwitchAuth(e) {
 		e.preventDefault();
@@ -19,13 +36,15 @@ export default function SignupForm({ setSignup }) {
 	async function handleSubmit(e) {
 		e.preventDefault();
 
-		const email = emailRef.current.value;
-		const fullName = fullNameRef.current.value;
-		const password = passwordRef.current.value;
-
+		if (fieldPassword !== fieldPasswordConfirm) {
+			setPasswordsMatch(false);
+			return;
+		}
+		setPasswordsMatch(true);
+		console.log(fieldEmail, fieldPassword, fieldName);
 		const { data: data_signup, error: error_signup } = await signUp({
-			email,
-			password,
+			email: fieldEmail,
+			password: fieldPassword,
 		});
 
 		if (error_signup) {
@@ -35,55 +54,135 @@ export default function SignupForm({ setSignup }) {
 		}
 
 		// Add additional user details to db
-		const { error: error_update } = await supabaseClient
-			.from('profile')
-			.insert({
-				user_id: data_signup.user.id,
-				full_name: fullName,
-				email: email,
-			});
+		const { error: error_update } = await UserAPI.updateUserDetails({
+			user_id: data_signup.user.id,
+			full_name: fieldName,
+			email: fieldEmail,
+		});
 
-		if (!error_signup) {
-			// Redirect user to Dashboard
-			navigateTo('/');
+		if (error_update) {
+			console.error(error_update);
+			alert(
+				'An error occurred while saving your details. Please complete your profile manually'
+			);
+			navigateTo('/profile/edit');
+			return;
 		}
+
+		// Redirect to home
+		navigateTo('/');
+	}
+
+	function handleNameChange(e) {
+		setFieldName(e.target.value);
+	}
+
+	function handleEmailChange(e) {
+		setFieldEmail(e.target.value);
+	}
+
+	function handlePasswordChange(e) {
+		setFieldPassword(e.target.value);
+		setPasswordsMatch(true);
+	}
+
+	function handleConfirmFieldChange(e) {
+		setFieldPasswordConfirm(e.target.value);
+		setPasswordsMatch(true);
 	}
 
 	return (
 		<>
-			<form onSubmit={handleSubmit}>
-				<div>
-					<label htmlFor='email'>Email address</label>
+			<h2 className='text-2xl'>Sign Up</h2>
+			<form onSubmit={handleSubmit} className='flex flex-col gap-2'>
+				<div className='flex gap-2 flex-start items-center'>
+					<EnvelopeIcon className='w-6 h-6' />
 					<input
 						id='email'
 						name='email'
 						type='email'
 						placeholder='Your email address'
-						ref={emailRef}
+						value={fieldEmail}
+						onChange={handleEmailChange}
+						required
+						className='w-full'
 					/>
 				</div>
-				<div>
-					<label htmlFor='fullName'>Full name</label>
+				<div className='flex gap-2 flex-start items-center'>
+					<UserIcon className='input- w-6 h-6' />
 					<input
-						className='input'
 						id='fullName'
 						name='fullName'
 						type='text'
 						placeholder='Enter your full name'
-						ref={fullNameRef}
+						value={fieldName}
+						onChange={handleNameChange}
+						required
+						className='input w-full'
 					/>
 				</div>
-				<div>
-					<label htmlFor='password'>Your Password</label>
+				<div className='flex gap-2 flex-start items-center'>
+					<KeyIcon className='w-6 h-6' />
 					<input
-						type='password'
+						type={`${showPassword ? 'text' : 'password'}`}
 						placeholder='Your password'
-						ref={passwordRef}
+						value={fieldPassword}
+						onChange={handlePasswordChange}
+						required
+						className='w-full'
 					/>
+					{showPassword ? (
+						<EyeIcon
+							className='w-6 h-6 m-1 cursor-pointer'
+							onClick={() => setShowPassword(!showPassword)}
+						/>
+					) : (
+						<EyeSlashIcon
+							className='w-6 h-6 m-1 cursor-pointer'
+							onClick={() => setShowPassword(!showPassword)}
+						/>
+					)}
 				</div>
-				<button type='submit'>Sign Up</button>
+				<div className='flex gap-2 flex-start items-center'>
+					<KeyIcon className='w-6 h-6' />
+					<input
+						type={`${showPasswordConfirm ? 'text' : 'password'}`}
+						placeholder='Repeat password'
+						value={fieldPasswordConfirm}
+						onChange={handleConfirmFieldChange}
+						required
+						className='w-full'
+					/>
+					{showPasswordConfirm ? (
+						<EyeIcon
+							className='w-6 h-6 m-1 cursor-pointer'
+							onClick={() =>
+								setShowPasswordConfirm(!showPasswordConfirm)
+							}
+						/>
+					) : (
+						<EyeSlashIcon
+							className='w-6 h-6 m-1 cursor-pointer'
+							onClick={() =>
+								setShowPasswordConfirm(!showPasswordConfirm)
+							}
+						/>
+					)}
+				</div>
+				<p>{passwordsMatch ? '' : 'Passwords do not match'}</p>
+				<button
+					type='submit'
+					className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'
+					disabled={!passwordsMatch}>
+					Sign Up
+				</button>
 			</form>
-			<a onClick={handleSwitchAuth}>Already have an account? Sign in</a>
+			<a
+				onClick={handleSwitchAuth}
+				className='hover:cursor-pointer hover:underline'>
+				Already have an account?{' '}
+				<span className='underline'>Sign in</span>
+			</a>
 		</>
 	);
 }

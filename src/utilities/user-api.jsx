@@ -1,5 +1,4 @@
 import { supabaseClient } from '../config/supabase-client';
-import { useAuth } from '../contexts/AuthProvider';
 
 export async function getUserDetails(userId) {
 	const { data } = await supabaseClient
@@ -10,20 +9,25 @@ export async function getUserDetails(userId) {
 	return !data ? {} : { ...data[0] };
 }
 
-export async function updateUserDetails(userId, data) {
-	const { updateUserData } = useAuth();
+export async function updateUserDetails(data) {
+	console.log('updateUserDetails', data);
+	if (
+		!data ||
+		data?.userId === '' ||
+		data?.email === '' ||
+		data?.full_name === ''
+	)
+		return { error: 'invalid data' };
 
-	const user_data = {
-		user_id: userId,
-		full_name: data.fullName,
-	};
+	// Clean input
 	const profile_data = {
-		user_id: userId,
+		user_id: data.user_id,
+		full_name: data.full_name,
 		department: data.department,
+		email: data.email,
 	};
-
-	const { error_user } = await updateUserData(user_data);
-	const { error_profile } = await supabaseClient
+	console.log('profile_data', profile_data);
+	const { error } = await supabaseClient
 		.from('profile')
 		.upsert(profile_data)
 		.select();

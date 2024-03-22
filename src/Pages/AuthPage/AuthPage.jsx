@@ -1,32 +1,21 @@
-import { useEffect, useState } from 'react';
-import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
-import { supabaseClient } from '../../config/supabase-client';
+import { useState } from 'react';
 
 import LoginForm from '../../components/LoginForm/LoginForm';
 import SignupForm from '../../components/SignupForm/SignupForm';
 
 export default function AuthPage() {
-	const [session, setSession] = useState();
 	const [signup, setSignup] = useState(false);
-
-	useEffect(() => {
-		supabaseClient.auth.getSession().then(({ data: { session } }) => {
-			setSession(session);
-		});
-
-		supabaseClient.auth.onAuthStateChange((_event, session) => {
-			setSession(session);
-		});
-	}, []);
 
 	return (
 		<>
-			{signup ? (
-				<SignupForm setSignup={setSignup} />
-			) : (
-				<LoginForm setSignup={setSignup} />
-			)}
+			<h1 className='text-4xl mb-10 mt-10'>ProjectPacer</h1>
+			<div className='bg-black p-10 border-none rounded-lg shadow-2xl flex flex-col items-center gap-6'>
+				{signup ? (
+					<SignupForm setSignup={setSignup} />
+				) : (
+					<LoginForm setSignup={setSignup} />
+				)}
+			</div>
 		</>
 	);
 }

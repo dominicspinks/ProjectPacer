@@ -21,11 +21,11 @@ import ProjectDetailsPage from '../ProjectDetailsPage/ProjectDetailsPage';
 import './App.css';
 
 function App() {
-	const [projectNames, setProjectNames] = useState([]);
-
 	const { user } = useAuth();
 
-	// temporary
+	const [projectNames, setProjectNames] = useState([]);
+
+	// Update project Names after the user signs in
 	useEffect(() => {
 		if (!user) return;
 		getProjectNames();
@@ -34,6 +34,7 @@ function App() {
 	async function getProjectNames() {
 		const { projectNames } = await ProjectAPI.getProjectNames(user.id);
 		setProjectNames(projectNames);
+		return projectNames;
 	}
 
 	// Function to pass to components to regenerate the project list after a change
@@ -43,8 +44,8 @@ function App() {
 
 	return (
 		<>
-			<NavBar />
-			<main>
+			{user && <NavBar />}
+			<main className='flex flex-col items-center'>
 				<Routes>
 					<Route
 						path='/'
