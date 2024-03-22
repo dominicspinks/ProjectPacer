@@ -72,135 +72,6 @@ input {
 		transform var(--animation-duration) ease;
 }
 
-@media (prefers-color-scheme: dark) {
-	h1 {
-		color: #fff;
-		color: var(--text-bright);
-	}
-}
-
-h2 {
-	color: #000;
-	color: var(--text-bright);
-}
-
-@media (prefers-color-scheme: dark) {
-	h2 {
-		color: #fff;
-		color: var(--text-bright);
-	}
-}
-
-h3 {
-	color: #000;
-	color: var(--text-bright);
-}
-
-@media (prefers-color-scheme: dark) {
-	h3 {
-		color: #fff;
-		color: var(--text-bright);
-	}
-}
-
-h4 {
-	color: #000;
-	color: var(--text-bright);
-}
-
-@media (prefers-color-scheme: dark) {
-	h4 {
-		color: #fff;
-		color: var(--text-bright);
-	}
-}
-
-h5 {
-	color: #000;
-	color: var(--text-bright);
-}
-
-@media (prefers-color-scheme: dark) {
-	h5 {
-		color: #fff;
-		color: var(--text-bright);
-	}
-}
-
-h6 {
-	color: #000;
-	color: var(--text-bright);
-}
-
-@media (prefers-color-scheme: dark) {
-	h6 {
-		color: #fff;
-		color: var(--text-bright);
-	}
-}
-
-strong {
-	color: #000;
-	color: var(--text-bright);
-}
-
-@media (prefers-color-scheme: dark) {
-	strong {
-		color: #fff;
-		color: var(--text-bright);
-	}
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-b,
-strong,
-th {
-	font-weight: 600;
-}
-
-q::before {
-	content: none;
-}
-
-q::after {
-	content: none;
-}
-
-blockquote {
-	border-left: 4px solid #0096bfab;
-	border-left: 4px solid var(--focus);
-	margin: 1.5em 0;
-	padding: 0.5em 1em;
-	font-style: italic;
-}
-
-@media (prefers-color-scheme: dark) {
-	blockquote {
-		border-left: 4px solid #0096bfab;
-		border-left: 4px solid var(--focus);
-	}
-}
-
-q {
-	border-left: 4px solid #0096bfab;
-	border-left: 4px solid var(--focus);
-	margin: 1.5em 0;
-	padding: 0.5em 1em;
-	font-style: italic;
-}
-
-@media (prefers-color-scheme: dark) {
-	q {
-		border-left: 4px solid #0096bfab;
-		border-left: 4px solid var(--focus);
-	}
-}
-
 button,
 select,
 input[type='submit'],
@@ -297,9 +168,9 @@ textarea {
 } */
 
 select {
-	color: #1d1d1d;
+	color: #fff;
 	color: var(--form-text);
-	background-color: #efefef;
+	background-color: #161f27;
 	background-color: var(--background);
 	font-family: inherit;
 	font-size: inherit;
@@ -311,19 +182,6 @@ select {
 	outline: none;
 }
 
-@media (prefers-color-scheme: dark) {
-	select {
-		background-color: #161f27;
-		background-color: var(--background);
-	}
-}
-
-@media (prefers-color-scheme: dark) {
-	select {
-		color: #fff;
-		color: var(--form-text);
-	}
-}
 /*
 button {
 	background-color: #d0cfcf;
@@ -404,12 +262,6 @@ input[type='button']:hover {
 		background: var(--button-hover);
 	}
 } */
-
-input[type='color'] {
-	min-height: 2rem;
-	padding: 8px;
-	cursor: pointer;
-}
 
 input[type='checkbox'],
 input[type='radio'] {
@@ -767,4 +619,8 @@ body > footer {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+}
+
+.active {
+	text-decoration: underline;
 }

@@ -3,29 +3,34 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthProvider';
 
 export default function NavBar({ supabase }) {
-	const { user } = useAuth();
-	const { signOut } = useAuth();
+	const { user, signOut } = useAuth();
 
 	function handleLogout() {
 		signOut();
 	}
 
 	return (
-		<nav className='bg-white border-gray-200 dark:bg-slate-900 dark:border-gray-700'>
-			<div className='max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4'>
-				{!user ? (
-					<NavLink to='/auth'>Login</NavLink>
-				) : (
-					<>
-						<div className='flex items-center space-x-4'>
-							<NavLink to='/projects'>Projects</NavLink>
-						</div>
-						<div className='flex items-center space-x-4'>
-							<NavLink to='/profile'>Profile</NavLink>
-							<button onClick={handleLogout}>Logout</button>
-						</div>
-					</>
-				)}
+		<nav className='bg-slate-900 border-gray-700'>
+			<div className='max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2'>
+				<div className='flex items-center space-x-4'>
+					<NavLink
+						to='/projects'
+						className='h-full hover:bg-slate-800 text-align-center px-3 py-2 rounded active:text-blue-500'>
+						Projects
+					</NavLink>
+				</div>
+				<div className='flex items-center space-x-4 h-10'>
+					<NavLink
+						to='/profile'
+						className='h-full hover:bg-slate-800 text-align-center px-3 py-2 rounded'>
+						Profile
+					</NavLink>
+					<button
+						onClick={handleLogout}
+						className='h-full hover:bg-slate-800 text-align-center px-3 py-2 rounded'>
+						Logout
+					</button>
+				</div>
 			</div>
 		</nav>
 	);
