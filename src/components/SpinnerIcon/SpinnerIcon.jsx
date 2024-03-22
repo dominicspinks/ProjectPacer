@@ -1,4 +1,5 @@
 export default function SpinnerIcon() {
+	// Default spinner from https://flowbite.com/docs/components/spinner/
 	return (
 		<svg
 			aria-hidden='true'
