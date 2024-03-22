@@ -1,8 +1,8 @@
-import ProjectListItem from '../ProjectListItem/ProjectListItem';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthProvider';
 
-import './ProjectList.css';
+// Components
+import ProjectListItem from '../ProjectListItem/ProjectListItem';
 
 export default function ProjectList({
 	projects,

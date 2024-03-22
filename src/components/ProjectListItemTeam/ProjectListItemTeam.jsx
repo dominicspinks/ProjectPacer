@@ -14,7 +14,7 @@ export default function ProjectListItemTeam({ members }) {
 	members.sort((a, b) => a.role_type.priority - b.role_type.priority);
 
 	return (
-		<ul className='projectListItemTeamList'>
+		<ul className='list-none m-0 p-0 pr-2'>
 			{/* Render the team owner */}
 			{members.length > 0 && (
 				<li>
@@ -22,9 +22,7 @@ export default function ProjectListItemTeam({ members }) {
 						<div>{members[0].profile.full_name}</div>
 						<div>
 							{members.length > 1 && (
-								<button
-									className='button button-small'
-									onClick={handleTeamClick}>
+								<button onClick={handleTeamClick}>
 									{expandTeam ? (
 										<MinusIcon className='w-4 h-4 text-white hover:text-gray-300' />
 									) : (

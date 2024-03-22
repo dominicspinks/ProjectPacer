@@ -232,12 +232,16 @@ export default function ChatContainer({ projectNames }) {
 						: ''
 				}`}>
 				<div
-					className={`bg-slate-300 flex gap-2 justify-between align-middle p-2 h-16 transition ease-in-out delay-150 ${
-						!showMessages ? 'rounded-full ' : ' rounded-t-lg'
+					className={`bg-slate-300 flex  align-middle p-2 h-16 transition ease-in-out delay-150 ${
+						!showMessages
+							? 'rounded-full justify-center'
+							: 'rounded-t-lg gap-2 justify-between'
 					}`}>
 					<div
 						onClick={toggleMessages}
-						className='flex gap-0 items-center'>
+						className={`flex gap-0 items-center ${
+							!showMessages ? 'justify-center' : ''
+						}`}>
 						<ChatBubbleLeftRightIcon
 							className={`text-slate-800 w-10 h-10 cursor-pointer ${
 								showMessages && unreadMessages.size > 0
@@ -257,7 +261,7 @@ export default function ChatContainer({ projectNames }) {
 						id='projectSelector'
 						value={fieldProjectId}
 						onChange={handleProjectChange}
-						className={`transition ease-in-out delay-150 ${
+						className={`pr-10 transition ease-in-out delay-150 ${
 							!showMessages ? 'hidden' : ''
 						}`}>
 						{projectNames.map((project) => (
@@ -283,7 +287,11 @@ export default function ChatContainer({ projectNames }) {
 					<div
 						id='messageList'
 						className='flex flex-col-reverse overflow-y-scroll gap-2 p-2 max-h-72 min-h-36 overscroll-contain max-w-96 bg-slate-400 border-2 border-l-0 border-y-0 border-r-slate-300'>
-						{filteredMessages.length === 0 && <p>No messages</p>}
+						{filteredMessages.length === 0 && (
+							<p className='text-gray-800'>
+								No messages to display
+							</p>
+						)}
 						{filteredMessages.map((message) => (
 							<ChatMessage
 								key={message.id}

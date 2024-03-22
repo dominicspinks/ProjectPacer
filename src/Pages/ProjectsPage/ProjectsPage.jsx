@@ -116,7 +116,7 @@ export default function ProjectsPage({ projectNames, reloadProjects }) {
 							reloadProjects={reloadProjects}
 							setShowModal={setShowModal}
 						/>
-						{/* Model sourced from https://www.creative-tim.com/learning-lab/tailwind-starter-kit/documentation/react/modals/regular */}
+						{/* Modal sourced from https://www.creative-tim.com/learning-lab/tailwind-starter-kit/documentation/react/modals/regular */}
 						{showModal ? (
 							<>
 								<div className='justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none'>
