@@ -30,7 +30,7 @@ export default function ChatMessage({ message, projectMembers }) {
 				className={`max-w-4/5 min-w-1/5 text-black p-1 pl-2 pr-2 border-gray-300 border-solid border-2 rounded-lg ${
 					!isOwnMessage.current
 						? 'bg-slate-300 border-gray-300 text-left'
-						: 'bg-teal-300 border-teal-300 text-right'
+						: 'bg-sky-300 border-none text-right'
 				}`}>
 				{!isOwnMessage.current && (
 					<p className='text-xs font-semibold'>

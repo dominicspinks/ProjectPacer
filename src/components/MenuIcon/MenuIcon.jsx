@@ -1,17 +1,8 @@
+// Icons
+import { Bars3Icon } from '@heroicons/react/24/outline';
+
 export default function MenuIcon() {
 	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			fill='none'
-			viewBox='0 0 24 24'
-			strokeWidth={1.5}
-			stroke='currentColor'
-			className='w-4 h-4'>
-			<path
-				strokeLinecap='round'
-				strokeLinejoin='round'
-				d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5'
-			/>
-		</svg>
+		<Bars3Icon className='color-white w-6 h-6 hover:cursor-pointer hover:text-slate-300 hover:bg-slate-900 p-1 border-none rounded-lg' />
 	);
 }

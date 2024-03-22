@@ -21,7 +21,8 @@ export async function getProjectNames(user_id) {
 	const { data, error } = await supabaseClient
 		.from('project')
 		.select(`id,name,project_member!inner(user_id)`)
-		.eq('project_member.user_id', user_id);
+		.eq('project_member.user_id', user_id)
+		.order('name', { ascending: true });
 	if (error) console.error(error);
 	return { projectNames: !data || error ? [] : data };
 }
