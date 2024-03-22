@@ -14,6 +14,7 @@ export default {
 				'3/4': '75%',
 				'4/5': '80%',
 				full: '100%',
+				content: 'max-content',
 			},
 			minWidth: {
 				'1/5': '20%',

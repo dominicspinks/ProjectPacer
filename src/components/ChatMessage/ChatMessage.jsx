@@ -38,7 +38,9 @@ export default function ChatMessage({ message, projectMembers }) {
 							'Anonymous'}
 					</p>
 				)}
-				<p className='chat-message__content'>{message.content}</p>
+				<p className='whitespace-pre-wrap text-start'>
+					{message.content}
+				</p>
 				<p className='text-xs italic'>
 					{new Date(message.created_at).toLocaleTimeString('en', {
 						timeStyle: 'short',

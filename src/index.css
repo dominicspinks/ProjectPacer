@@ -8,6 +8,10 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+	box-sizing: border-box;
+}
+
 :root {
 	--background-body: #fff;
 	--background: #efefef;
@@ -145,7 +149,7 @@ main {
 		color: var(--text-main);
 	}
 }
-
+/*
 button {
 	transition: background-color 0.1s linear, border-color 0.1s linear,
 		color 0.1s linear, box-shadow 0.1s linear, transform 0.1s ease;
@@ -166,7 +170,7 @@ button {
 			box-shadow var(--animation-duration) linear,
 			transform var(--animation-duration) ease;
 	}
-}
+} */
 
 input {
 	transition: background-color 0.1s linear, border-color 0.1s linear,
@@ -455,7 +459,7 @@ input {
 		color: var(--form-text);
 	}
 }
-
+/*
 button {
 	color: #1d1d1d;
 	color: var(--form-text);
@@ -512,7 +516,7 @@ textarea {
 		color: #fff;
 		color: var(--form-text);
 	}
-}
+} */
 
 select {
 	color: #1d1d1d;
@@ -542,7 +546,7 @@ select {
 		color: var(--form-text);
 	}
 }
-
+/*
 button {
 	background-color: #d0cfcf;
 	background-color: var(--button-base);
@@ -555,7 +559,7 @@ button {
 		background-color: #0c151c;
 		background-color: var(--button-base);
 	}
-}
+} */
 
 input[type='submit'] {
 	background-color: #d0cfcf;
@@ -598,7 +602,7 @@ input[type='button'] {
 		background-color: var(--button-base);
 	}
 }
-
+/*
 button:hover {
 	background: #9b9b9b;
 	background: var(--button-hover);
@@ -609,8 +613,8 @@ button:hover {
 		background: #040a0f;
 		background: var(--button-hover);
 	}
-}
-
+} */
+/*
 input[type='submit']:hover {
 	background: #9b9b9b;
 	background: var(--button-hover);
@@ -621,7 +625,7 @@ input[type='submit']:hover {
 		background: #040a0f;
 		background: var(--button-hover);
 	}
-}
+} */
 
 input[type='reset']:hover {
 	background: #9b9b9b;
@@ -681,13 +685,13 @@ textarea {
 	-webkit-appearance: none;
 }
 
-textarea {
+/* textarea {
 	display: block;
 	margin-right: 0;
 	box-sizing: border-box;
 	resize: vertical;
-}
-
+} */
+/*
 textarea:not([cols]) {
 	width: 100%;
 }
@@ -695,7 +699,7 @@ textarea:not([cols]) {
 textarea:not([rows]) {
 	min-height: 40px;
 	height: 140px;
-}
+} */
 
 select {
 	background: #efefef
@@ -779,7 +783,7 @@ select:focus {
 		box-shadow: 0 0 0 2px var(--focus);
 	}
 }
-
+/*
 button:focus {
 	box-shadow: 0 0 0 2px #0096bfab;
 	box-shadow: 0 0 0 2px var(--focus);
@@ -802,7 +806,7 @@ textarea:focus {
 		box-shadow: 0 0 0 2px #0096bfab;
 		box-shadow: 0 0 0 2px var(--focus);
 	}
-}
+} */
 
 input[type='checkbox']:active,
 input[type='radio']:active,
@@ -1269,7 +1273,7 @@ tbody tr:nth-child(even) {
 		background-color: var(--background);
 	}
 }
-
+/*
 tbody tr:nth-child(even) button {
 	background-color: #f7f7f7;
 	background-color: var(--background-alt);
@@ -1292,7 +1296,7 @@ tbody tr:nth-child(even) button:hover {
 		background-color: #202b38;
 		background-color: var(--background-body);
 	}
-}
+} */
 
 ::-webkit-scrollbar {
 	height: 10px;
