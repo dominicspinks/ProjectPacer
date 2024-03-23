@@ -1,11 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+// Contexts
+import { useAuth } from '../../contexts/AuthProvider';
 
 // Components
 import LoginForm from '../../components/LoginForm/LoginForm';
 import SignupForm from '../../components/SignupForm/SignupForm';
 
 export default function AuthPage() {
+	const { user } = useAuth();
+	const navigateTo = useNavigate();
 	const [signup, setSignup] = useState(false);
+
+	// If the user is already logged in, redirect to home
+	useEffect(() => {
+		if (user) {
+			navigateTo('/');
+		}
+	}, []);
 
 	return (
 		<>
