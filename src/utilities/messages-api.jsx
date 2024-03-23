@@ -32,22 +32,3 @@ export async function sendMessage(userId, projectId, content) {
 	}
 	return { data };
 }
-
-// // Get existing messages for all projects a user has access to for initialisation
-// export async function getMessages(projects) {
-// 	console.log(projects);
-// 	if (projects.length === 0) return { error: 'invalid input' };
-// 	const { data, error } = await supabaseClient
-// 		.from('message_view')
-// 		.select('*')
-// 		.in(
-// 			'project_id',
-// 			projects.map((project) => project.id)
-// 		);
-// 	console.log('messages api - get messages', data, error);
-// 	if (error) {
-// 		console.error(error);
-// 		return { error: error };
-// 	}
-// 	return { data };
-// }

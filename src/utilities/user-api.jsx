@@ -10,7 +10,6 @@ export async function getUserDetails(userId) {
 }
 
 export async function updateUserDetails(data) {
-	console.log('updateUserDetails', data);
 	if (
 		!data ||
 		data?.userId === '' ||
@@ -26,10 +25,18 @@ export async function updateUserDetails(data) {
 		department: data.department,
 		email: data.email,
 	};
-	console.log('profile_data', profile_data);
+
 	const { error } = await supabaseClient
 		.from('profile')
 		.upsert(profile_data)
 		.select();
-	return { error };
+
+	if (error) {
+		console.error(error);
+		return { error: error };
+	}
+
+	return {
+		data: { message: 'success' },
+	};
 }

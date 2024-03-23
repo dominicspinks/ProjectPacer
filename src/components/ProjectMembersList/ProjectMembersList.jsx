@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 // Contexts
 import { useAuth } from '../../contexts/AuthProvider';
@@ -42,10 +42,20 @@ export default function ProjectMembersList({
 	}
 
 	// Sort member list by role priority
-	project.project_member.sort(
-		(a, b) => a.role_type.priority - b.role_type.priority
-	);
+	useMemo(() => {
+		project.project_member.sort(
+			(a, b) => a.role_type.priority - b.role_type.priority
+		);
+	}, [project]);
 
+	// Sort invite list by role priority
+	useMemo(() => {
+		projectInvites.sort(
+			(a, b) => a.role_type.priority - b.role_type.priority
+		);
+	}, [projectInvites]);
+
+	// Check if email address already belongs to the project
 	function findEmailInTeam(email) {
 		if (
 			project.project_member.find(
@@ -65,11 +75,13 @@ export default function ProjectMembersList({
 			return;
 		}
 
+		// Check if role is valid
 		if (fieldRole === '') {
 			setFieldRoleInvalid(true);
 			return;
 		}
 
+		// Save invite for user
 		const { data, error } = await ProjectAPI.addProjectMember(
 			project.id,
 			fieldEmail,
@@ -77,9 +89,9 @@ export default function ProjectMembersList({
 			user.id
 		);
 
-		cleanModal();
-		handleReloadProjectDetails();
-		getProjectInvites();
+		cleanModal(); // Hide modal and clean modal fields
+		handleReloadProjectDetails(); // Refresh project details
+		getProjectInvites(); // Refresh list of user's invites
 	}
 
 	// Hide modal and clean modal fields
@@ -106,11 +118,14 @@ export default function ProjectMembersList({
 	}
 
 	async function handleRemoveInvite(inviteId) {
-		//
+		// Remove invite from db
 		const { error } = await ProjectAPI.removeProjectInvite(inviteId);
 
-		if (error) console.error(error);
-		getProjectInvites();
+		if (error) {
+			console.error(error);
+			return;
+		}
+		getProjectInvites(); // Refresh list of user's invites
 	}
 
 	return (

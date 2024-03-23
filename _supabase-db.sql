@@ -75,3 +75,27 @@ create table
     constraint public_messages_project_id_fkey foreign key (project_id) references project (id) on update cascade on delete set null,
     constraint public_messages_user_id_fkey foreign key (user_id) references profile (user_id) on update cascade on delete cascade
   ) tablespace pg_default;
+
+CREATE OR REPLACE FUNCTION public.add_new_project(
+  name varchar,
+  description varchar,
+  user_id uuid
+)
+RETURNS setof public.project
+AS $$
+  declare
+  project_id int;
+  declare
+  role_id int;
+begin
+  SELECT id into role_id FROM role_type WHERE role_type = 'owner';
+  INSERT into project
+    (name, description)
+    values (name, description)
+    returning id
+    into project_id;
+  INSERT into project_member
+    (project_id, user_id, role_id)
+     values (project_id, user_id, role_id);
+RETURN query select * from project where project.id = project_id;
+END $$ language plpgsql;

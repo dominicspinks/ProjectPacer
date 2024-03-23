@@ -1,5 +1,7 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
+
+// Contexts
 import { useAuth } from '../../contexts/AuthProvider';
 
 // API
@@ -12,6 +14,7 @@ import SpinnerIcon from '../../components/SpinnerIcon/SpinnerIcon';
 export default function ProjectDetailsPage() {
 	const { projectId } = useParams();
 	const { user } = useAuth();
+	const navigateTo = useNavigate();
 
 	const [project, setProject] = useState(null);
 	const [loading, setLoading] = useState(true);
@@ -32,9 +35,9 @@ export default function ProjectDetailsPage() {
 
 		setProject(data);
 
-		projectRoleRef.current = data.project_member.filter(
+		projectRoleRef.current = data?.project_member?.find(
 			(member) => member.user_id === user.id
-		)[0].role_type.role_type;
+		)?.role_type.role_type;
 
 		setLoading(false);
 	}
@@ -47,7 +50,9 @@ export default function ProjectDetailsPage() {
 		getProjectDetails();
 
 		// If a member removes themselves from a group, they should be navigated back to the project list page
-		// ** TODO **
+		if (user.id === userId) {
+			navigateTo('/projects');
+		}
 	}
 
 	function handleReloadProjectDetails() {

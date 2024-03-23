@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../../contexts/AuthProvider';
 import { useNavigate } from 'react-router-dom';
+
+// Contexts
+import { useAuth } from '../../contexts/AuthProvider';
 
 // Components
 import ProjectList from '../../components/ProjectList/ProjectList';
@@ -29,12 +31,18 @@ export default function ProjectsPage({ projectNames, reloadProjects }) {
 		getProjectDetails();
 	}, [user, userProjectInvites, projectNames]);
 
+	// Get project details
 	async function getProjectDetails() {
 		if (projectNames.length === 0) return;
 
-		const { projects } = await ProjectAPI.getProjectDetails(
+		const { projects, error } = await ProjectAPI.getProjectDetails(
 			projectNames.map((project) => project.id)
 		);
+
+		if (error) {
+			console.error(error);
+			return;
+		}
 
 		setProjects(projects);
 
@@ -51,12 +59,17 @@ export default function ProjectsPage({ projectNames, reloadProjects }) {
 			return;
 		}
 
+		// Add new project to db
 		const { data, error } = await ProjectAPI.addProject(
 			user.id,
 			fieldProjectName,
 			fieldProjectDescription
 		);
-		if (error) console.error(error);
+
+		if (error) {
+			console.error(error);
+			return;
+		}
 
 		cleanModal();
 

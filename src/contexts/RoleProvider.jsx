@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect, createContext } from 'react';
 
+// APIs
 import * as roleAPI from '../utilities/role-api';
 
 // create a context for authentication
@@ -12,13 +13,15 @@ export const RoleProvider = ({ children }) => {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		// console.log('get roles');
 		getRoles();
 	}, []);
 
 	async function getRoles() {
 		const { roles, error } = await roleAPI.getRoles();
-		if (error) console.error(error);
+		if (error) {
+			console.error(error);
+			return;
+		}
 		setRoles(roles);
 		setLoading(false);
 	}

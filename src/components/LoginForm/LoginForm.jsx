@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Contexts
 import { useAuth } from '../../contexts/AuthProvider';
 
 // Icons
@@ -20,7 +21,6 @@ export default function LoginForm({ setSignup }) {
 	const [showPassword, setShowPassword] = useState(false);
 
 	function handleSwitchAuth(e) {
-		e.preventDefault();
 		setSignup(true);
 	}
 
@@ -48,6 +48,7 @@ export default function LoginForm({ setSignup }) {
 	function handlePasswordChange(e) {
 		setFieldPassword(e.target.value);
 	}
+
 	return (
 		<>
 			<h2 className='text-2xl'>Sign In</h2>
@@ -93,12 +94,12 @@ export default function LoginForm({ setSignup }) {
 					Sign In
 				</button>
 			</form>
-			<a
+			<div
 				onClick={handleSwitchAuth}
 				className='hover:cursor-pointer hover:underline'>
 				Don't have an account?{' '}
 				<span className='underline'>Sign up</span>
-			</a>
+			</div>
 		</>
 	);
 }

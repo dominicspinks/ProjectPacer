@@ -15,6 +15,7 @@ export default function ProjectList({
 	const [filteredProjects, setFilteredProjects] = useState([...projects]);
 	const { user } = useAuth();
 
+	// Filter values to be removed from the useEffect and called directly from the change handler
 	useEffect(() => {
 		// This will update the filtered list and reapply the filters if the 'projects' state or any filters are updated
 		filterList();
@@ -27,6 +28,7 @@ export default function ProjectList({
 		for (let i = 0; i < projects.length; i++) {
 			const project = projects[i];
 
+			// If filter applied and the user is not an owner, skip the project
 			if (
 				filterOwner &&
 				project.project_member.find((member) => {
@@ -38,9 +40,11 @@ export default function ProjectList({
 			)
 				continue;
 
+			// If filter applied and the project is not archived, skip the project
 			if (project.is_archived !== (filterProjectStatus === 'archived'))
 				continue;
 
+			// If filter is not empty, and the project name doesn't match, skip the project
 			if (
 				filterProjectName.length > 0 &&
 				!project.name
@@ -49,6 +53,7 @@ export default function ProjectList({
 			)
 				continue;
 
+			// Add the project to the filtered list
 			filteredList.push(project);
 		}
 

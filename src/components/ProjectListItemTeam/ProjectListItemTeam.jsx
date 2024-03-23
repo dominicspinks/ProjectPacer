@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 // Icons
 import { PlusIcon, MinusIcon } from '@heroicons/react/24/outline';
@@ -9,9 +9,11 @@ export default function ProjectListItemTeam({ members }) {
 	function handleTeamClick() {
 		setExpandTeam(!expandTeam);
 	}
-	// Sort list of members by role [ owner -> manager -> member]
 
-	members.sort((a, b) => a.role_type.priority - b.role_type.priority);
+	// Sort list of members by role [ owner -> manager -> member]
+	useMemo(() => {
+		members.sort((a, b) => a.role_type.priority - b.role_type.priority);
+	}, [members]);
 
 	return (
 		<ul className='list-none m-0 p-0 pr-2'>

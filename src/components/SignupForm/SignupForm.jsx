@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Contexts
 import { useAuth } from '../../contexts/AuthProvider';
 
 // API
@@ -17,6 +18,7 @@ import {
 
 export default function SignupForm({ setSignup }) {
 	const { signUp } = useAuth();
+	const navigateTo = useNavigate();
 
 	const [showPassword, setShowPassword] = useState(false);
 	const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
@@ -27,9 +29,7 @@ export default function SignupForm({ setSignup }) {
 	const [fieldPasswordConfirm, setFieldPasswordConfirm] = useState('');
 	const [passwordsMatch, setPasswordsMatch] = useState(true);
 
-	const navigateTo = useNavigate();
 	function handleSwitchAuth(e) {
-		e.preventDefault();
 		setSignup(false);
 	}
 
@@ -40,8 +40,10 @@ export default function SignupForm({ setSignup }) {
 			setPasswordsMatch(false);
 			return;
 		}
+
 		setPasswordsMatch(true);
-		console.log(fieldEmail, fieldPassword, fieldName);
+
+		// Create user in auth db
 		const { data: data_signup, error: error_signup } = await signUp({
 			email: fieldEmail,
 			password: fieldPassword,
@@ -62,6 +64,7 @@ export default function SignupForm({ setSignup }) {
 
 		if (error_update) {
 			console.error(error_update);
+			// Needs proper handling of create user succeeding, and update details failing. Possibly remove the newly created user from the auth db
 			alert(
 				'An error occurred while saving your details. Please complete your profile manually'
 			);
@@ -69,7 +72,7 @@ export default function SignupForm({ setSignup }) {
 			return;
 		}
 
-		// Redirect to home
+		// Redirect to home if signup is successful
 		navigateTo('/');
 	}
 
@@ -177,12 +180,12 @@ export default function SignupForm({ setSignup }) {
 					Sign Up
 				</button>
 			</form>
-			<a
+			<div
 				onClick={handleSwitchAuth}
 				className='hover:cursor-pointer hover:underline'>
 				Already have an account?{' '}
 				<span className='underline'>Sign in</span>
-			</a>
+			</div>
 		</>
 	);
 }

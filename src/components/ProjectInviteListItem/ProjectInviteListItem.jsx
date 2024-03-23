@@ -28,6 +28,7 @@ export default function ProjectInviteListItem({ invite, reloadProjects }) {
 	]);
 
 	async function handleAcceptButton() {
+		// Add user to project
 		const { error: error_insert_member } =
 			await ProjectAPI.insertProjectMember(
 				invite.project.id,
@@ -48,8 +49,9 @@ export default function ProjectInviteListItem({ invite, reloadProjects }) {
 			console.error(error_remove_invite);
 			return;
 		}
-		getProjectInvites();
-		reloadProjects();
+
+		getProjectInvites(); // Refresh list of user's invites
+		reloadProjects(); // Refresh list of user's projects
 	}
 
 	async function handleDeclineButton() {
@@ -58,7 +60,7 @@ export default function ProjectInviteListItem({ invite, reloadProjects }) {
 			console.error(error);
 			return;
 		}
-		getProjectInvites();
+		getProjectInvites(); // Refresh list of user's invites
 	}
 
 	return (

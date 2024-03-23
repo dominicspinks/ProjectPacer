@@ -7,11 +7,6 @@ export default function ChatMessage({ message, projectMembers }) {
 	const { user } = useAuth();
 	const isOwnMessage = useRef(message.user_id === user.id);
 
-	// console.log(
-	// 	'chat message',
-	// 	projectMembers,
-	// 	projectMembers.get(message.user_id)
-	// );
 	// Change surname of full name to be only the first letter
 	function trimSurname(name) {
 		if (!name) return name;

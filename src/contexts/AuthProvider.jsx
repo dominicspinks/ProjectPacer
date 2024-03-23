@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect, createContext } from 'react';
 import { supabaseClient } from '../config/supabase-client';
 
+// API
 import * as userAPI from '../utilities/user-api';
 
 // create a context for authentication
@@ -9,9 +10,15 @@ const AuthContext = createContext({
 	user: null,
 	userDetails: {},
 	userProjectInvites: [],
+	getUserDetails: () => {},
+	getProjectInvites: () => {},
+	signUp: () => {},
+	signIn: () => {},
+	updateUserData: () => {},
 	signOut: () => {},
 });
 
+// export the useAuth hook
 export const AuthProvider = ({ children }) => {
 	const [user, setUser] = useState();
 	const [userDetails, setUserDetails] = useState({});
@@ -46,11 +53,13 @@ export const AuthProvider = ({ children }) => {
 		};
 	}, []);
 
+	// Get user details from Profile table
 	async function getUserDetails() {
 		const userDetails = await userAPI.getUserDetails(user.id);
 		setUserDetails({ ...userDetails });
 	}
 
+	// Reload user details from Profile and invites tables when user logs in
 	useEffect(() => {
 		if (!user) return;
 
@@ -66,13 +75,14 @@ export const AuthProvider = ({ children }) => {
 				'id, email, role_type!inner(id, role_type, priority), project!inner(id,name), profile!inner(user_id,full_name)'
 			)
 			.eq('email', user.email);
-		// console.log('api - get invites list', data, error);
+
 		if (error) {
 			console.error(error);
 		}
 		setUserProjectInvites(data);
 	}
 
+	// Sign out user and reset state
 	function signOut() {
 		supabaseClient.auth.signOut();
 		setUser(null);

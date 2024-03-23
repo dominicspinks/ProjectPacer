@@ -14,13 +14,16 @@ import MenuDefault from '../MenuButton/MenuButton';
 export default function ProjectListItem({ project, reloadProjects }) {
 	const { user } = useAuth();
 	const navigateTo = useNavigate();
+
 	const [loading, setLoading] = useState(true);
 
+	// Get the user's role in the current project
 	const projectRoleRef = useRef(
 		project?.project_member?.find((member) => member.user_id === user.id)
 			?.role_type?.role_type ?? ''
 	);
 
+	// Menu list
 	const menuItemsRef = useRef([
 		{
 			name: 'View',

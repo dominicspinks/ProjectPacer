@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+
+// Contexts
 import { useAuth } from '../../contexts/AuthProvider';
 
 // Components
@@ -28,6 +30,7 @@ function App() {
 		getProjectNames();
 	}, [user]);
 
+	// Get the project names and IDs from the database that the current user belongs to
 	async function getProjectNames() {
 		const { projectNames } = await ProjectAPI.getProjectNames(user.id);
 		setProjectNames(projectNames);

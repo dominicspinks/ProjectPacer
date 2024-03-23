@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
+// Contexts
 import { useAuth } from '../../contexts/AuthProvider';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { supabaseClient } from '../../config/supabase-client';
 
 // APIs
 import * as UserAPI from '../../utilities/user-api';
@@ -42,7 +43,8 @@ export default function EditProfilePage() {
 			console.error(error);
 			return;
 		}
-		getUserDetails();
+
+		getUserDetails(); // Reload user details
 		navigateTo('/profile');
 	}
 

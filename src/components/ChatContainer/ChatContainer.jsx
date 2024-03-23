@@ -20,7 +20,6 @@ import {
 } from '@heroicons/react/24/outline';
 
 export default function ChatContainer({ projectNames }) {
-	// console.log(projectNames);
 	const { user } = useAuth();
 
 	const [showMessages, setShowMessages] = useState(false);
@@ -38,7 +37,6 @@ export default function ChatContainer({ projectNames }) {
 	const [fieldMessage, setFieldMessage] = useState('');
 	const [projectMembers, setProjectMembers] = useState(new Map());
 
-	// To do, listen only for changes to specific projects, when the project changes, the listener will be closed and a new one opened. This will reduce memory requirements, but means new message alerts wont work for projects not selected (this will require a second listenter)
 	useEffect(() => {
 		// Get initial messages list
 		getMessages();
