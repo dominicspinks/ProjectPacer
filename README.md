@@ -1,6 +1,6 @@
 # ProjectPacer
 
-ProjectPacer is a project management application designed to help small teams efficiently manage their projects. It provides features for logging in, tracking project details, and facilitating team communication through a chat window.
+ProjectPacer is a project management application designed to help small teams efficiently manage their projects. It provides features for user authentication, tracking project progress, and facilitating team communication through a chat window.
 
 ## Screenshots
 
