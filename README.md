@@ -4,14 +4,17 @@ ProjectPacer is a project management application designed to help small teams ef
 
 ## Screenshots
 
-![Login Screen](public/screenshots/login_screen.png)
 _Login Screen_
 
-![Project Screen](public/screenshots/project_screen.png)
+![Login Screen](public/screenshots/login_screen.png)
+
 _Project Screen_
 
-![Chat Window](public/screenshots/chat_window.png)
+![Project Screen](public/screenshots/project_screen.png)
+
 _Chat Window_
+
+![Chat Window](public/screenshots/chat_window.png)
 
 ## Technologies Used
 
