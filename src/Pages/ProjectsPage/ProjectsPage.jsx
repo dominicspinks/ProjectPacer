@@ -33,7 +33,11 @@ export default function ProjectsPage({ projectNames, reloadProjects }) {
 
 	// Get project details
 	async function getProjectDetails() {
-		if (projectNames.length === 0) return;
+		if (!projectNames) return;
+		if (projectNames.length === 0) {
+			setLoading(false);
+			return;
+		}
 
 		const { projects, error } = await ProjectAPI.getProjectDetails(
 			projectNames.map((project) => project.id)

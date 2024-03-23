@@ -127,6 +127,9 @@ export default function ProjectList({
 					))}
 				</tbody>
 			</table>
+			{filteredProjects?.length === 0 && (
+				<p className='italic'>No projects found</p>
+			)}
 		</>
 	);
 }
