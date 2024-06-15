@@ -31,24 +31,24 @@ export default function UserDefaultTaskList({
 
     return (
         <div className='mt-10'>
-            <div className='flex justify-between items-end mb-0'>
-                <h2 className='italic text-left pl-2 mb-0'>Default Tasks</h2>
-                <button
-                    className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2'
-                    onClick={handleAddTask}>
-                    Add New Task
-                </button>
-            </div>
-            <div className='border-b-2 mb-4'></div>
-            {tasks.length > 0 ? (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
+            <h2 className='italic text-left pl-2 border-b-2 mb-4'>
+                Default Tasks
+            </h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>
+                            <button
+                                className='bg-blue-500 text-sm  hover:bg-blue-700 text-white font-bold py-1 px-2 rounded'
+                                onClick={handleAddTask}>
+                                Add New Task
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+                {tasks.length > 0 ? (
                     <tbody>
                         {tasks.map((task) => (
                             <UserDefaultTaskListItem
@@ -59,10 +59,10 @@ export default function UserDefaultTaskList({
                             />
                         ))}
                     </tbody>
-                </table>
-            ) : (
-                <p className='text-left p-2'>No tasks available</p>
-            )}
+                ) : (
+                    <p className='text-left p-2'>No tasks available</p>
+                )}
+            </table>
             {showModal && (
                 <>
                     <div className='justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none'>
