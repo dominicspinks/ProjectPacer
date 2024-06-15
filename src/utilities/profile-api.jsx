@@ -27,7 +27,6 @@ export async function addUserDefaultTask(task) {
 
 // Update existing user default task
 export async function updateUserDefaultTask(task) {
-    console.log(task);
     const { data, error } = await supabaseClient
         .from('user_task_default')
         .update({

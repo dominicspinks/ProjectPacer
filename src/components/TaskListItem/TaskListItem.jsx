@@ -1,5 +1,3 @@
-import { useRef } from 'react';
-
 // Components
 import MenuButton from '../MenuButton/MenuButton';
 
@@ -8,7 +6,7 @@ export default function UserDefaultTaskListItem({
     handleEditTask,
     handleDeleteTask,
 }) {
-    const menuItemsRef = useRef([
+    const menuItems = [
         {
             name: 'Edit',
             onClick: () => {
@@ -21,7 +19,7 @@ export default function UserDefaultTaskListItem({
                 handleDeleteTask(task.id);
             },
         },
-    ]);
+    ];
 
     return (
         <tr>
@@ -30,7 +28,7 @@ export default function UserDefaultTaskListItem({
                 {task.description}
             </td>
             <td>
-                <MenuButton menuItems={menuItemsRef.current} />
+                <MenuButton menuItems={menuItems} />
             </td>
         </tr>
     );

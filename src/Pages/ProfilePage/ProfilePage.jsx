@@ -1,21 +1,58 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+
+// API
+import * as ProfileAPI from '../../utilities/profile-api';
 
 // Contexts
 import { useAuth } from '../../contexts/AuthProvider';
 
 // Components
 import ProjectInviteList from '../../components/ProjectInviteList/ProjectInviteList';
-import UserDefaultTaskList from '../../components/UserDefaultTaskList/UserDefaultTaskList';
+import TaskList from '../../components/TaskList/TaskList';
 
 export default function ProfilePage({ reloadProjects }) {
     const { user, userDetails, getProjectInvites } = useAuth();
 
-    // get project invites for the user
+    const [tasks, setTasks] = useState([]);
+
+    // get project invites and tasks for the user
     useEffect(() => {
         if (!user) return;
         getProjectInvites();
+        loadTasks();
     }, [user]);
+
+    async function loadTasks() {
+        try {
+            const data = await ProfileAPI.getUserDefaultTasks(user.id);
+            setTasks(data);
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+        }
+    }
+
+    async function handleSaveTask(task) {
+        try {
+            if (task.id) {
+                await ProfileAPI.updateUserDefaultTask(task);
+            } else {
+                await ProfileAPI.addUserDefaultTask(task);
+            }
+            loadTasks();
+        } catch (error) {
+            console.error('Error saving task:', error);
+        }
+    }
+
+    async function handleDeleteTask(id) {
+        try {
+            await ProfileAPI.deleteUserDefaultTask(id);
+            loadTasks();
+        } catch (error) {
+            console.error('Error deleting task:', error);
+        }
+    }
 
     return (
         <div className='block p-6 border rounded-lg shadow bg-gray-800 border-gray-700 w-full'>
@@ -58,7 +95,11 @@ export default function ProfilePage({ reloadProjects }) {
                 </Link>
             </div>
             <ProjectInviteList reloadProjects={reloadProjects} />
-            <UserDefaultTaskList />
+            <TaskList
+                tasks={tasks}
+                handleDeleteTask={handleDeleteTask}
+                handleSaveTask={handleSaveTask}
+            />
         </div>
     );
 }

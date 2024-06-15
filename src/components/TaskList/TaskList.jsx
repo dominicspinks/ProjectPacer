@@ -1,74 +1,33 @@
-import { useState, useEffect } from 'react';
-
-// API
-import * as ProfileAPI from '../../utilities/profile-api';
-
-// Contexts
-import { useAuth } from '../../contexts/AuthProvider';
+import { useState } from 'react';
 
 // Components
-import UserDefaultTaskListItem from '../UserDefaultTaskListItem/UserDefaultTaskListItem';
+import UserDefaultTaskListItem from '../TaskListItem/TaskListItem';
 
 // Icons
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
-export default function UserDefaultTaskList() {
-    const { user } = useAuth();
-
-    const [tasks, setTasks] = useState([]);
+export default function UserDefaultTaskList({
+    tasks,
+    handleDeleteTask,
+    handleSaveTask,
+}) {
     const [showModal, setShowModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
-
-    useEffect(() => {
-        loadTasks();
-    }, []);
-
-    const loadTasks = async () => {
-        try {
-            const data = await ProfileAPI.getUserDefaultTasks(user.id);
-            setTasks(data);
-        } catch (error) {
-            console.error('Error fetching tasks:', error);
-        }
-    };
-
-    const handleAddTask = () => {
-        setCurrentTask(null);
-        setShowModal(true);
-    };
-
-    const handleEditTask = (task) => {
-        setCurrentTask(task);
-        setShowModal(true);
-    };
-
-    const handleSaveTask = async (task) => {
-        try {
-            if (task.id) {
-                await ProfileAPI.updateUserDefaultTask(task);
-            } else {
-                await ProfileAPI.addUserDefaultTask(task);
-            }
-            loadTasks();
-        } catch (error) {
-            console.error('Error saving task:', error);
-        }
-        setShowModal(false);
-    };
-
-    const handleDeleteTask = async (id) => {
-        try {
-            await ProfileAPI.deleteUserDefaultTask(id);
-            loadTasks();
-        } catch (error) {
-            console.error('Error deleting task:', error);
-        }
-    };
 
     const cleanModal = () => {
         setShowModal(false);
         setCurrentTask(null);
     };
+
+    function handleAddTask() {
+        setCurrentTask(null);
+        setShowModal(true);
+    }
+
+    function handleEditTask(task) {
+        setCurrentTask(task);
+        setShowModal(true);
+    }
 
     return (
         <div className='mt-10'>
@@ -162,7 +121,7 @@ export default function UserDefaultTaskList() {
                                                 })
                                             }
                                             value={
-                                                currentTask
+                                                currentTask?.description
                                                     ? currentTask.description
                                                     : ''
                                             }
@@ -180,9 +139,10 @@ export default function UserDefaultTaskList() {
                                     <button
                                         className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
                                         type='button'
-                                        onClick={() =>
-                                            handleSaveTask(currentTask)
-                                        }>
+                                        onClick={() => {
+                                            handleSaveTask(currentTask);
+                                            setShowModal(false);
+                                        }}>
                                         Save
                                     </button>
                                 </div>
