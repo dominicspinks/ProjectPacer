@@ -76,29 +76,7 @@ create table
     constraint public_messages_user_id_fkey foreign key (user_id) references profile (user_id) on update cascade on delete cascade
   ) tablespace pg_default;
 
-CREATE OR REPLACE FUNCTION public.add_new_project(
-  name varchar,
-  description varchar,
-  user_id uuid
-)
-RETURNS setof public.project
-AS $$
-  declare
-  project_id int;
-  declare
-  role_id int;
-begin
-  SELECT id into role_id FROM role_type WHERE role_type = 'owner';
-  INSERT into project
-    (name, description)
-    values (name, description)
-    returning id
-    into project_id;
-  INSERT into project_member
-    (project_id, user_id, role_id)
-     values (project_id, user_id, role_id);
-RETURN query select * from project where project.id = project_id;
-END $$ language plpgsql;
+
 
 --  Create table for default user tasks
 create table
@@ -124,3 +102,30 @@ create table
     constraint project_task_pkey primary key (id),
     constraint project_task_project_id_fkey foreign key (project_id) references project (id) on update cascade on delete cascade
   ) tablespace pg_default;
+
+CREATE OR REPLACE FUNCTION public.add_new_project(
+    _name varchar,
+    _description varchar,
+    _user_id uuid
+)
+ RETURNS SETOF public.project
+ LANGUAGE plpgsql
+AS $function$
+    declare _project_id int;
+    declare _role_id int;
+begin
+  SELECT id into _role_id FROM role_type WHERE role_type = 'owner';
+  INSERT into project
+    (name, description)
+    values (_name, _description)
+    returning id
+    into _project_id;
+  INSERT into project_member
+    (project_id, user_id, role_id)
+     values (_project_id, _user_id, _role_id);
+  INSERT INTO project_task
+    (project_id, name, description)
+    SELECT _project_id, user_task_default.name, user_task_default.description FROM user_task_default
+    WHERE user_task_default.user_id = _user_id;
+RETURN query select * from project where project.id = _project_id;
+END$function$
