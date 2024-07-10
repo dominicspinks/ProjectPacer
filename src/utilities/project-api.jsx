@@ -111,11 +111,11 @@ export async function getProject(userId, projectId) {
     const { data, error } = await supabaseClient
         .from('project')
         .select(
-            'id, name, description, is_archived, created_at,project_member!left(user_id, role_type!inner(role_type, priority), profile!inner(full_name, email)),project_invite!left(id, email, role_id)'
+            'id, name, description, is_archived, created_at,project_member!left(user_id, role_type!inner(role_type, priority), profile!inner(full_name, email)),project_invite!left(id, email, role_id), project_task!left(id, name, description)'
         )
         .eq('id', projectId)
         .limit(1);
-
+    console.log('project details', data);
     if (error || data.length === 0) {
         console.error(error);
         return { error: error };
@@ -259,5 +259,57 @@ export async function getProjectMembers(projectIds) {
 
     return {
         data: memberMap,
+    };
+}
+
+// Get list of tasks belonging to a project
+export async function getProjectTasks(projectId) {
+    const { data, error } = await supabaseClient
+        .from('project_task')
+        .select('*')
+        .eq('project_id', projectId);
+
+    if (error) {
+        console.error(error);
+        return { error: error };
+    }
+
+    return {
+        data: data,
+    };
+}
+
+// Add a task to a project
+export async function addProjectTask(projectId, name, description) {
+    const { data, error } = await supabaseClient.from('project_task').insert({
+        project_id: projectId,
+        name: name,
+        description: description,
+    });
+
+    if (error) {
+        console.error(error);
+        return { error: error };
+    }
+
+    return {
+        data: { message: 'success' },
+    };
+}
+
+// Remove a task from a project
+export async function removeProjectTask(taskId) {
+    const { data, error } = await supabaseClient
+        .from('project_task')
+        .delete()
+        .eq('id', taskId);
+
+    if (error) {
+        console.error(error);
+        return { error: error };
+    }
+
+    return {
+        data: { message: 'success' },
     };
 }
