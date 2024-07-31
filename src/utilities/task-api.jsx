@@ -58,3 +58,50 @@ export async function getAccumulatedTime(projectId) {
 
     return { data: data[0].sum || 0 };
 }
+
+// Get all task time entries for a project
+export async function getTaskTimeHistory(projectId) {
+    const { data, error } = await supabaseClient
+        .from('task_time')
+        .select(
+            'profile!inner(full_name), project_task!inner(name), created_at, stopped_at, duration'
+        )
+        .eq('project_task.project_id', projectId)
+        .not('duration', 'is', null);
+
+    if (error) {
+        console.error(error);
+        return { error: error };
+    }
+
+    return {
+        data: transformData(data),
+    };
+}
+
+function transformData(data) {
+    return data.map((item) => ({
+        'Task Name': item.project_task.name,
+        'Performed By': item.profile.full_name,
+        Date: formatDateString(item.created_at),
+        'Start Time': formatTimeString(item.created_at),
+        'End Time': formatTimeString(item.stopped_at),
+        'Duration (min)': Math.max(1, Math.round(+item.duration / 60)),
+    }));
+}
+
+function formatDateString(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function formatTimeString(dateString) {
+    const date = new Date(dateString);
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+}

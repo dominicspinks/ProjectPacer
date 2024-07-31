@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 // Contexts
 import { useAuth } from '../../contexts/AuthProvider';
@@ -7,15 +8,12 @@ import { useAuth } from '../../contexts/AuthProvider';
 // APIs
 import * as TaskAPI from '../../utilities/task-api';
 
-// Components
-import SpinnerIcon from '../../components/SpinnerIcon/SpinnerIcon';
-
 export default function TrackPage({ projectNames }) {
     const { user } = useAuth();
 
-    const [selectedProjectId, setSelectedProjectId] = useState('');
+    const [selectedProjectId, setSelectedProjectId] = useState(0);
     const [taskList, setTaskList] = useState([]);
-    const [taskSelected, setTaskSelected] = useState('');
+    const [taskSelected, setTaskSelected] = useState(0);
     const [activeTask, setActiveTask] = useState(null);
     const [sessionTime, setSessionTime] = useState('00:00:00');
     const [accumulatedTime, setAccumulatedTime] = useState('00:00:00');
@@ -28,7 +26,6 @@ export default function TrackPage({ projectNames }) {
             '0'
         );
         const secs = String(seconds % 60).padStart(2, '0');
-        console.log(seconds, `${hours}:${minutes}:${secs}`);
         return `${hours}:${minutes}:${secs}`;
     };
 
@@ -68,7 +65,7 @@ export default function TrackPage({ projectNames }) {
 
     async function handleSelectProject(e) {
         setSelectedProjectId(e.target.value);
-        if (e.target.value === '') return;
+        if (e.target.value === 0) return;
 
         // Get task list for the selected project
         const { data, error } = await TaskAPI.getTaskList(e.target.value);
@@ -80,14 +77,11 @@ export default function TrackPage({ projectNames }) {
         setTaskList(data);
 
         // Get accumulated time for the selected project
-        await getAccumulatedTime();
+        await getAccumulatedTime(e.target.value);
     }
 
-    async function getAccumulatedTime() {
-        console.log(selectedProjectId);
-        const { data, error } = await TaskAPI.getAccumulatedTime(
-            selectedProjectId
-        );
+    async function getAccumulatedTime(projectId = selectedProjectId) {
+        const { data, error } = await TaskAPI.getAccumulatedTime(projectId);
 
         if (error) {
             console.error(error);
@@ -98,7 +92,7 @@ export default function TrackPage({ projectNames }) {
 
     function handleSelectTask(e) {
         setTaskSelected(e.target.value);
-        if (e.target.value === '') {
+        if (e.target.value === 0) {
             setTaskList([]);
             return;
         }
@@ -109,17 +103,12 @@ export default function TrackPage({ projectNames }) {
     }
 
     async function handleStartButton() {
-        console.log('press start');
-
         // Check for active timers to prevent changing task without stopping timer first
-        console.log(activeTask, taskSelected);
-        if (activeTask?.duration === null || taskSelected === '') return;
-        console.log('create new timer');
+        if (activeTask?.duration === null || taskSelected === 0) return;
         await startTaskTimer();
     }
 
     async function handleStopButton() {
-        console.log('press stop');
         // Check for active timer
         if (!activeTask || activeTask?.duration) return;
 
@@ -130,8 +119,45 @@ export default function TrackPage({ projectNames }) {
         await getAccumulatedTime();
     }
 
-    function handleGenerateReportButton() {
-        console.log('press generate report');
+    async function handleGenerateReportButton() {
+        const { data, error } = await TaskAPI.getTaskTimeHistory(
+            selectedProjectId
+        );
+        if (error) {
+            alert(error.message);
+            return;
+        }
+        if (data.length === 0) {
+            alert('This project does not have any task timer history');
+            return;
+        }
+        exportToExcel(data);
+    }
+
+    function exportToExcel(exportData) {
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(
+            workbook,
+            worksheet,
+            projectNames.find((p) => p.id === +selectedProjectId).name
+        );
+
+        // Buffer to store the generated Excel file
+        const excelBuffer = XLSX.write(workbook, {
+            bookType: 'xlsx',
+            type: 'array',
+        });
+        const blob = new Blob([excelBuffer], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
+        });
+
+        saveAs(
+            blob,
+            `Task History - ${
+                projectNames.find((p) => p.id === +selectedProjectId).name
+            }.xlsx`
+        );
     }
 
     async function startTaskTimer() {
@@ -145,7 +171,6 @@ export default function TrackPage({ projectNames }) {
             console.error(error);
             return;
         }
-        console.log(data.created_at);
         setActiveTask(data);
     }
 
@@ -156,7 +181,6 @@ export default function TrackPage({ projectNames }) {
             console.error(error);
             return;
         }
-        console.log(data);
         setActiveTask(data);
     }
 
@@ -170,11 +194,11 @@ export default function TrackPage({ projectNames }) {
                     <label htmlFor='project'>Active Project</label>
                     <select
                         className={`pr-8 w-full ${
-                            selectedProjectId === '' ? 'italic' : 'not-italic'
+                            selectedProjectId === 0 ? 'italic' : 'not-italic'
                         }`}
                         id='project'
                         onChange={handleSelectProject}>
-                        <option className='italic' value=''>
+                        <option className='italic' value={0}>
                             Select Project
                         </option>
                         {projectNames.map((project) => (
@@ -191,13 +215,13 @@ export default function TrackPage({ projectNames }) {
                     <label htmlFor='task'>Task Type</label>
                     <select
                         className={`pr-8 w-full ${
-                            taskSelected === '' || taskList.length === 0
+                            taskSelected === 0 || taskList.length === 0
                                 ? 'italic'
                                 : 'not-italic'
                         }`}
                         id='task'
                         onChange={handleSelectTask}>
-                        <option className='italic' value=''>
+                        <option className='italic' value={0}>
                             {taskList.length === 0
                                 ? 'No Available Tasks'
                                 : 'Select Task'}
@@ -264,7 +288,6 @@ export default function TrackPage({ projectNames }) {
                         className={`w-full h-full bg-blue-500 text-white rounded border border-gray-700 hover:bg-blue-700 ${
                             activeTask?.StopTime ? 'cursor-not-allowed' : ''
                         }`}
-                        disabled
                         onClick={handleGenerateReportButton}>
                         Generate Report
                     </button>
