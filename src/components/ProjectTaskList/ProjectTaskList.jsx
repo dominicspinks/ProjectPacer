@@ -20,6 +20,8 @@ export default function ProjectTaskList({
 
     // Hide modal and clean modal fields
     function cleanModal() {
+        setFieldName('');
+        setFieldDescription('');
         setShowModal(false);
     }
 
@@ -50,6 +52,10 @@ export default function ProjectTaskList({
             return;
         }
         handleReloadProjectDetails();
+    }
+
+    function handleCloseModal() {
+        cleanModal();
     }
 
     return (
@@ -137,7 +143,7 @@ export default function ProjectTaskList({
                                     <button
                                         className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded'
                                         type='button'
-                                        onClick={() => setShowModal(false)}>
+                                        onClick={handleCloseModal}>
                                         Close
                                     </button>
                                     <button
