@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 
 // Components
-import MenuButton from '../MenuButton/MenuButton';
+import MenuButton from '../Buttons/MenuButton';
 
 export default function ProjectTaskList({
     task,

@@ -10,7 +10,7 @@ import * as ProjectAPI from '../../utilities/project-api';
 import { useAuth } from '../../contexts/AuthProvider';
 
 // Components
-import ChatMessage from '../ChatMessage/ChatMessage';
+import ChatMessage from './ChatMessage';
 
 // Icons
 import {
@@ -221,34 +221,28 @@ export default function ChatContainer({ projectNames }) {
     return (
         <div
             id='messagesContainer'
-            className={`fixed bottom-0 right-0 m-3 flex flex-col flex-end transition ease-in-out delay-150 ${
-                !showMessages ? 'w-16 h-16' : 'w-96'
-            } ${
-                !showMessages && unreadMessages.size > 0 ? 'animate-bounce' : ''
-            }`}>
+            className={`fixed bottom-0 right-0 m-3 flex flex-col flex-end transition ease-in-out delay-150 ${!showMessages ? 'w-16 h-16' : 'w-96'
+                } ${!showMessages && unreadMessages.size > 0 ? 'animate-bounce' : ''
+                }`}>
             <div
-                className={`bg-slate-300 flex  align-middle p-2 h-16 transition ease-in-out delay-150 ${
-                    !showMessages
+                className={`bg-slate-300 flex  align-middle p-2 h-16 transition ease-in-out delay-150 ${!showMessages
                         ? 'rounded-full justify-center'
                         : 'rounded-t-lg gap-2 justify-between'
-                }`}>
+                    }`}>
                 <div
                     onClick={toggleMessages}
-                    className={`flex gap-0 items-center ${
-                        !showMessages ? 'justify-center' : ''
-                    }`}>
+                    className={`flex gap-0 items-center ${!showMessages ? 'justify-center' : ''
+                        }`}>
                     <ChatBubbleLeftRightIcon
-                        className={`text-slate-800 w-10 h-10 cursor-pointer ${
-                            showMessages && unreadMessages.size > 0
+                        className={`text-slate-800 w-10 h-10 cursor-pointer ${showMessages && unreadMessages.size > 0
                                 ? 'animate-bounce'
                                 : ''
-                        }`}
+                            }`}
                     />
                     {showMessages && (
                         <ChevronDownIcon
-                            className={`text-slate-800 w-6 h-6 cursor-pointer ${
-                                !showMessages && 'hidden'
-                            }`}
+                            className={`text-slate-800 w-6 h-6 cursor-pointer ${!showMessages && 'hidden'
+                                }`}
                         />
                     )}
                 </div>
@@ -256,9 +250,8 @@ export default function ChatContainer({ projectNames }) {
                     id='projectSelector'
                     value={fieldProjectId}
                     onChange={handleProjectChange}
-                    className={`pr-10 transition ease-in-out delay-150 ${
-                        !showMessages ? 'hidden' : ''
-                    }`}>
+                    className={`pr-10 transition ease-in-out delay-150 ${!showMessages ? 'hidden' : ''
+                        }`}>
                     {projectNames.map((project) => (
                         <option
                             key={project.id}
@@ -274,9 +267,8 @@ export default function ChatContainer({ projectNames }) {
             </div>
             <div
                 id='messages'
-                className={`transition ease-in-out delay-150 ${
-                    !showMessages ? 'hidden' : ''
-                }`}>
+                className={`transition ease-in-out delay-150 ${!showMessages ? 'hidden' : ''
+                    }`}>
                 <div
                     id='messageList'
                     className='flex flex-col-reverse overflow-y-scroll gap-2 p-2 max-h-72 min-h-36 overscroll-contain max-w-96 bg-slate-400 border-2 border-l-0 border-y-0 border-r-slate-300'>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // Components
-import UserDefaultTaskListItem from '../TaskListItem/TaskListItem';
+import UserDefaultTaskListItem from './TaskListItem';
 
 // Icons
 import { XMarkIcon } from '@heroicons/react/24/outline';

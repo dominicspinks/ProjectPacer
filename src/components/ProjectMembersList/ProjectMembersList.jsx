@@ -8,7 +8,7 @@ import { useRoles } from '../../contexts/RoleProvider';
 import * as ProjectAPI from '../../utilities/project-api';
 
 // Components
-import ProjectMembersListItem from '../ProjectMembersListItem/ProjectMembersListItem';
+import ProjectMembersListItem from './ProjectMembersListItem';
 
 // Icons
 import { XMarkIcon } from '@heroicons/react/24/outline';

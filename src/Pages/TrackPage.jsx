@@ -3,10 +3,10 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 
 // Contexts
-import { useAuth } from '../../contexts/AuthProvider';
+import { useAuth } from '../contexts/AuthProvider';
 
 // APIs
-import * as TaskAPI from '../../utilities/task-api';
+import * as TaskAPI from '../utilities/task-api';
 
 export default function TrackPage({ projectNames }) {
     const { user } = useAuth();
@@ -60,7 +60,7 @@ export default function TrackPage({ projectNames }) {
     const weekStartDate = new Date();
     weekStartDate.setDate(
         weekStartDate.getDate() -
-            (weekStartDate.getDay() === 0 ? 6 : weekStartDate.getDay() - 1)
+        (weekStartDate.getDay() === 0 ? 6 : weekStartDate.getDay() - 1)
     );
 
     async function handleSelectProject(e) {
@@ -154,8 +154,7 @@ export default function TrackPage({ projectNames }) {
 
         saveAs(
             blob,
-            `Task History - ${
-                projectNames.find((p) => p.id === +selectedProjectId).name
+            `Task History - ${projectNames.find((p) => p.id === +selectedProjectId).name
             }.xlsx`
         );
     }
@@ -193,9 +192,8 @@ export default function TrackPage({ projectNames }) {
                 <div className='col-span-2 w-full'>
                     <label htmlFor='project'>Active Project</label>
                     <select
-                        className={`pr-8 w-full ${
-                            selectedProjectId === 0 ? 'italic' : 'not-italic'
-                        }`}
+                        className={`pr-8 w-full ${selectedProjectId === 0 ? 'italic' : 'not-italic'
+                            }`}
                         id='project'
                         onChange={handleSelectProject}>
                         <option className='italic' value={0}>
@@ -214,11 +212,10 @@ export default function TrackPage({ projectNames }) {
                 <div className='w-full'>
                     <label htmlFor='task'>Task Type</label>
                     <select
-                        className={`pr-8 w-full ${
-                            taskSelected === 0 || taskList.length === 0
+                        className={`pr-8 w-full ${taskSelected === 0 || taskList.length === 0
                                 ? 'italic'
                                 : 'not-italic'
-                        }`}
+                            }`}
                         id='task'
                         onChange={handleSelectTask}>
                         <option className='italic' value={0}>
@@ -242,9 +239,8 @@ export default function TrackPage({ projectNames }) {
                 </div>
                 <div>
                     <button
-                        className={`w-full h-full bg-green-500 text-white rounded border border-gray-700 hover:bg-green-700 ${
-                            activeTask?.duration === null ? 'disabled' : ''
-                        }`}
+                        className={`w-full h-full bg-green-500 text-white rounded border border-gray-700 hover:bg-green-700 ${activeTask?.duration === null ? 'disabled' : ''
+                            }`}
                         disabled={activeTask?.duration === null}
                         onClick={handleStartButton}>
                         Start
@@ -255,24 +251,23 @@ export default function TrackPage({ projectNames }) {
                     <p>
                         {activeTask?.created_at
                             ? new Date(
-                                  activeTask.created_at
-                              ).toLocaleTimeString('en-AU', {
-                                  hourCycle: 'h23',
-                              }) +
-                              ' ' +
-                              new Date(
-                                  activeTask.created_at
-                              ).toLocaleDateString('en-AU')
+                                activeTask.created_at
+                            ).toLocaleTimeString('en-AU', {
+                                hourCycle: 'h23',
+                            }) +
+                            ' ' +
+                            new Date(
+                                activeTask.created_at
+                            ).toLocaleDateString('en-AU')
                             : '--'}
                     </p>
                 </div>
                 <div>
                     <button
-                        className={`w-full h-full bg-red-500 text-white rounded border border-gray-700 hover:bg-red-700 ${
-                            activeTask?.duration === null
+                        className={`w-full h-full bg-red-500 text-white rounded border border-gray-700 hover:bg-red-700 ${activeTask?.duration === null
                                 ? ''
                                 : 'disabled:cursor-not-allowed disabled'
-                        }`}
+                            }`}
                         disabled={!activeTask || activeTask.duration !== null}
                         onClick={handleStopButton}>
                         Stop
@@ -285,9 +280,8 @@ export default function TrackPage({ projectNames }) {
 
                 <div>
                     <button
-                        className={`w-full h-full bg-blue-500 text-white rounded border border-gray-700 hover:bg-blue-700 ${
-                            activeTask?.StopTime ? 'cursor-not-allowed' : ''
-                        }`}
+                        className={`w-full h-full bg-blue-500 text-white rounded border border-gray-700 hover:bg-blue-700 ${activeTask?.StopTime ? 'cursor-not-allowed' : ''
+                            }`}
                         onClick={handleGenerateReportButton}>
                         Generate Report
                     </button>

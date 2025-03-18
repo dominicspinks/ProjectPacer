@@ -2,23 +2,23 @@ import { useCallback, useEffect, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 // Contexts
-import { useAuth } from '../../contexts/AuthProvider';
+import { useAuth } from './contexts/AuthProvider';
 
 // Components
-import ProtectedRoute from '../../components/ProtectedRoute/ProtectedRoute';
-import ChatContainer from '../../components/ChatContainer/ChatContainer';
+import ProtectedRoute from './routes/ProtectedRoute';
+import ChatContainer from './components/Chat/ChatContainer';
 
 // APIs
-import * as ProjectAPI from '../../utilities/project-api';
+import * as ProjectAPI from './utilities/project-api';
 
 // Pages
-import AuthPage from '../AuthPage/AuthPage';
-import NavBar from '../NavBar/NavBar';
-import ProjectsPage from '../ProjectsPage/ProjectsPage';
-import ProfilePage from '../ProfilePage/ProfilePage';
-import EditProfilePage from '../EditProfilePage/EditProfilePage';
-import ProjectDetailsPage from '../ProjectDetailsPage/ProjectDetailsPage';
-import TrackPage from '../TrackPage/TrackPage';
+import AuthPage from './Pages/AuthPage';
+import NavBar from './components/Navigation/NavBar';
+import ProjectsPage from './Pages/ProjectsPage';
+import ProfilePage from './Pages/ProfilePage';
+import EditProfilePage from './Pages/EditProfilePage';
+import ProjectDetailsPage from './Pages/ProjectDetailsPage';
+import TrackPage from './Pages/TrackPage';
 
 export default function App() {
     const { user } = useAuth();

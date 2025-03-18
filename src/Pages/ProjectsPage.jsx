@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Contexts
-import { useAuth } from '../../contexts/AuthProvider';
+import { useAuth } from '../contexts/AuthProvider';
 
 // Components
-import ProjectList from '../../components/ProjectList/ProjectList';
-import SpinnerIcon from '../../components/SpinnerIcon/SpinnerIcon';
+import ProjectList from '../components/ProjectList/ProjectList';
+import SpinnerIcon from '../components/Icons/SpinnerIcon';
 
 // APIs
-import * as ProjectAPI from '../../utilities/project-api';
+import * as ProjectAPI from '../utilities/project-api';
 
 // Icons
 import { XMarkIcon } from '@heroicons/react/24/outline';

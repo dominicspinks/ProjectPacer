@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 // API
-import * as ProfileAPI from '../../utilities/profile-api';
+import * as ProfileAPI from '../utilities/profile-api';
 
 // Contexts
-import { useAuth } from '../../contexts/AuthProvider';
+import { useAuth } from '../contexts/AuthProvider';
 
 // Components
-import ProjectInviteList from '../../components/ProjectInviteList/ProjectInviteList';
-import TaskList from '../../components/TaskList/TaskList';
+import ProjectInviteList from '../components/ProjectInviteList/ProjectInviteList';
+import TaskList from '../components/TaskList/TaskList';
 
 export default function ProfilePage({ reloadProjects }) {
     const { user, userDetails, getProjectInvites } = useAuth();
@@ -65,7 +65,7 @@ export default function ProfilePage({ reloadProjects }) {
                         <div className='w-24 font-bold text-left'>Name:</div>
                         <div className='value'>
                             {userDetails?.full_name ||
-                            userDetails?.full_name === ''
+                                userDetails?.full_name === ''
                                 ? userDetails.full_name
                                 : '--'}
                         </div>
@@ -82,7 +82,7 @@ export default function ProfilePage({ reloadProjects }) {
                         </div>
                         <div className='value'>
                             {userDetails?.department ||
-                            userDetails?.department === ''
+                                userDetails?.department === ''
                                 ? userDetails.department
                                 : '--'}
                         </div>

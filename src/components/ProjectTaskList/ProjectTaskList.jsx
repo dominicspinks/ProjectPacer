@@ -4,7 +4,7 @@ import { useState } from 'react';
 import * as ProjectAPI from '../../utilities/project-api';
 
 // Components
-import ProjectTaskListItem from '../ProjectTaskListItem/ProjectTaskListItem';
+import ProjectTaskListItem from './ProjectTaskListItem';
 
 // Icons
 import { XMarkIcon } from '@heroicons/react/24/outline';
