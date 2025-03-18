@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 // Contexts
@@ -20,27 +20,37 @@ import EditProfilePage from '../EditProfilePage/EditProfilePage';
 import ProjectDetailsPage from '../ProjectDetailsPage/ProjectDetailsPage';
 import TrackPage from '../TrackPage/TrackPage';
 
-function App() {
+export default function App() {
     const { user } = useAuth();
-
     const [projectNames, setProjectNames] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    // Get the project names and IDs from the database that the current user belongs to
+    const getProjectNames = useCallback(async () => {
+        if (!user) return;
+
+        setIsLoading(true);
+        try {
+            const { projectNames } = await ProjectAPI.getProjectNames(user.id);
+            setProjectNames(projectNames);
+            return projectNames;
+        } catch (error) {
+            console.error('Error fetching projects:', error);
+            return [];
+        } finally {
+            setIsLoading(false);
+        }
+    }, [user]);
 
     // Update project Names after the user signs in
     useEffect(() => {
         if (!user) return;
         getProjectNames();
-    }, [user]);
-
-    // Get the project names and IDs from the database that the current user belongs to
-    async function getProjectNames() {
-        const { projectNames } = await ProjectAPI.getProjectNames(user.id);
-        setProjectNames(projectNames);
-        return projectNames;
-    }
+    }, [user, getProjectNames]);
 
     // Function to pass to components to regenerate the project list after a change
     function reloadProjects() {
-        getProjectNames();
+        return getProjectNames();
     }
 
     return (
@@ -104,5 +114,3 @@ function App() {
         </>
     );
 }
-
-export default App;
