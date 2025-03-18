@@ -73,63 +73,73 @@ export default function ProjectList({
     }
 
     return (
-        <>
-            <div className='flex justify-between items-center mb-4'>
+        <div className="w-full overflow-x-auto">
+            {/* Filter Controls - Stack on mobile, row on larger screens */}
+            <div className='flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4'>
                 <select
                     name='projectStatus'
                     onChange={handleProjectStatusChange}
-                    className='pr-10'>
+                    className='px-3 py-2 bg-gray-700 rounded w-full md:w-auto'>
                     <option value='active'>Active</option>
                     <option value='archived'>Archived</option>
                 </select>
-                <div className='flex gap-4 items-center justify-between'>
-                    <label htmlFor='projectName'>Project Name</label>
+
+                <div className='flex flex-col sm:flex-row gap-2 sm:items-center w-full md:w-auto'>
+                    <label htmlFor='projectName' className="whitespace-nowrap">Project Name</label>
                     <input
                         type='text'
                         id='projectName'
                         onChange={handleProjectNameChange}
                         placeholder='search'
                         value={filterProjectName}
+                        className='px-3 py-2 bg-gray-700 rounded w-full'
                     />
                 </div>
-                <div className='flex gap-2 items-center'>
-                    <label htmlFor='toggleOwner'>
+
+                <div className='flex items-center gap-2'>
+                    <label htmlFor='toggleOwner' className="whitespace-nowrap text-sm">
                         Show only projects I own
-                    </label>{' '}
+                    </label>
                     <input
                         type='checkbox'
                         id='toggleOwner'
                         onChange={handleToggleOwner}
+                        className="h-4 w-4"
                     />
                 </div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Team</th>
-                        <th>
-                            <button
-                                className='bg-blue-500 text-sm  hover:bg-blue-700 text-white font-bold py-1 px-2 rounded'
-                                onClick={() => setShowModal(true)}>
-                                New Project
-                            </button>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filteredProjects.map((project) => (
-                        <ProjectListItem
-                            key={project.id}
-                            project={project}
-                            reloadProjects={reloadProjects}
-                        />
-                    ))}
-                </tbody>
-            </table>
+
+            {/* Project Table with horizontal scroll on small screens */}
+            <div className="overflow-x-auto">
+                <table className="min-w-full table-auto">
+                    <thead className="bg-gray-700">
+                        <tr>
+                            <th className="px-4 py-2 text-left">Name</th>
+                            <th className="px-4 py-2 text-left">Team</th>
+                            <th className="px-1 py-2 text-right">
+                                <button
+                                    className='bg-blue-500 text-sm hover:bg-blue-700 text-white font-bold py-1 px-2 rounded'
+                                    onClick={() => setShowModal(true)}>
+                                    New
+                                </button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredProjects.map((project) => (
+                            <ProjectListItem
+                                key={project.id}
+                                project={project}
+                                reloadProjects={reloadProjects}
+                            />
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
             {filteredProjects?.length === 0 && (
-                <p className='italic'>No projects found</p>
+                <p className='italic text-center mt-4'>No projects found</p>
             )}
-        </>
+        </div>
     );
 }
