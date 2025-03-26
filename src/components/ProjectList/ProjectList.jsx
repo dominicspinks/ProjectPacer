@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useAuth } from '../../contexts/AuthProvider';
-
-// Components
 import ProjectListItem from './ProjectListItem';
+import { PlusIcon } from '@heroicons/react/24/outline';
 
 export default function ProjectList({
     projects,
@@ -12,53 +11,30 @@ export default function ProjectList({
     const [filterProjectStatus, setFilterProjectStatus] = useState('active');
     const [filterOwner, setFilterOwner] = useState(false);
     const [filterProjectName, setFilterProjectName] = useState('');
-    const [filteredProjects, setFilteredProjects] = useState([...projects]);
     const { user } = useAuth();
 
-    // Filter values to be removed from the useEffect and called directly from the change handler
-    useEffect(() => {
-        // This will update the filtered list and reapply the filters if the 'projects' state or any filters are updated
-        filterList();
-    }, [projects, filterProjectName, filterProjectStatus, filterOwner]);
+    const filteredProjects = useMemo(() => {
+        return projects.filter(project => {
+            // Check owner filter
+            if (filterOwner) {
+                const isOwner = project.project_member.some(
+                    member => member.role_type.role_type === 'owner' && member.user_id === user.id
+                );
+                if (!isOwner) return false;
+            }
 
-    function filterList() {
-        // Filter the list of projects based on the selected search filters
-        const filteredList = [];
+            // Check project status filter
+            if (project.is_archived !== (filterProjectStatus === 'archived')) return false;
 
-        for (let i = 0; i < projects.length; i++) {
-            const project = projects[i];
-
-            // If filter applied and the user is not an owner, skip the project
-            if (
-                filterOwner &&
-                project.project_member.find((member) => {
-                    return (
-                        member.role_type.role_type === 'owner' &&
-                        member.user_id === user.id
-                    );
-                }) === undefined
-            )
-                continue;
-
-            // If filter applied and the project is not archived, skip the project
-            if (project.is_archived !== (filterProjectStatus === 'archived'))
-                continue;
-
-            // If filter is not empty, and the project name doesn't match, skip the project
+            // Check project name filter
             if (
                 filterProjectName.length > 0 &&
-                !project.name
-                    .toLowerCase()
-                    .startsWith(filterProjectName.toLowerCase())
-            )
-                continue;
+                !project.name.toLowerCase().startsWith(filterProjectName.toLowerCase())
+            ) return false;
 
-            // Add the project to the filtered list
-            filteredList.push(project);
-        }
-
-        setFilteredProjects([...filteredList]);
-    }
+            return true;
+        });
+    }, [projects, filterProjectName, filterProjectStatus, filterOwner, user.id]);
 
     function handleProjectNameChange(e) {
         setFilterProjectName(e.target.value);
@@ -114,13 +90,13 @@ export default function ProjectList({
                 <table className="min-w-full table-auto">
                     <thead className="bg-gray-700">
                         <tr>
-                            <th className="px-4 py-2 text-left">Name</th>
-                            <th className="px-4 py-2 text-left">Team</th>
-                            <th className="px-1 py-2 text-right">
+                            <th className="px-2 py-1 text-left align-middle h-10 min-w-[100px]">Name</th>
+                            <th className="px-2 py-1 text-left align-middle h-10">Team</th>
+                            <th className="py-1 text-center align-middle h-10 max-w-[30px] px-0">
                                 <button
-                                    className='bg-blue-500 text-sm hover:bg-blue-700 text-white font-bold py-1 px-2 rounded'
+                                    className='bg-blue-500 text-sm hover:bg-blue-700 text-white font-bold rounded inline-flex items-center justify-center p-1'
                                     onClick={() => setShowModal(true)}>
-                                    New
+                                    <PlusIcon className='w-5 h-5 text-white hover:text-gray-300' />
                                 </button>
                             </th>
                         </tr>

@@ -107,7 +107,7 @@ export default function ProjectsPage({ projectNames, reloadProjects }) {
             {loading ? (
                 <SpinnerIcon />
             ) : (
-                <div className='block p-6 border rounded-lg shadow bg-gray-800 border-gray-700 max-w-full'>
+                <div className='block p-2 m-2 rounded-lg shadow bg-gray-900 max-w-full'>
                     <h5 className='mb-2 text-2xl font-bold tracking-tight mb-4'>
                         My Projects
                     </h5>

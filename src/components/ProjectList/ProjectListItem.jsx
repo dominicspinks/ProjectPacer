@@ -1,13 +1,7 @@
-import { useState, useRef } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-// Contexts
 import { useAuth } from '../../contexts/AuthProvider';
-
-// API
 import * as ProjectAPI from '../../utilities/project-api';
-
-// Components
 import ProjectListItemTeam from './ProjectListItemTeam';
 import MenuDefault from '../Buttons/MenuButton';
 
@@ -15,99 +9,90 @@ export default function ProjectListItem({ project, reloadProjects }) {
     const { user } = useAuth();
     const navigateTo = useNavigate();
 
-    const [loading, setLoading] = useState(true);
-
     // Get the user's role in the current project
-    const projectRoleRef = useRef(
-        project?.project_member?.find((member) => member.user_id === user.id)
-            ?.role_type?.role_type ?? ''
-    );
+    const projectRole = useMemo(() => {
+        return project?.project_member?.find((member) => member.user_id === user.id)
+            ?.role_type?.role_type ?? '';
+    }, [project, user.id]);
 
-    // Menu list
-    const menuItemsRef = useRef([
-        {
-            name: 'View',
-            onClick: () => {
-                handleViewButton();
+    // Generate menu items based on user role and project status
+    const menuItems = useMemo(() => {
+        const items = [
+            {
+                name: 'View',
+                onClick: handleViewButton,
             },
-        },
-    ]);
+        ];
 
-    // menuList archive button
-    if (
-        loading &&
-        ['owner', 'manager'].includes(projectRoleRef.current) &&
-        !project.is_archived
-    ) {
-        menuItemsRef.current.push({
-            name: 'Archive',
-            onClick: () => {
-                handleArchiveButton();
-            },
-        });
-    }
+        // Add Archive button for owners and managers of non-archived projects
+        if (['owner', 'manager'].includes(projectRole) && !project.is_archived) {
+            items.push({
+                name: 'Archive',
+                onClick: handleArchiveButton,
+            });
+        }
 
-    // menuList set active button
-    if (
-        loading &&
-        ['owner', 'manager'].includes(projectRoleRef.current) &&
-        project.is_archived
-    ) {
-        menuItemsRef.current.push({
-            name: 'Set Active',
-            onClick: () => {
-                handleSetActiveButton();
-            },
-        });
-    }
+        // Add Set Active button for owners and managers of archived projects
+        if (['owner', 'manager'].includes(projectRole) && project.is_archived) {
+            items.push({
+                name: 'Set Active',
+                onClick: handleSetActiveButton,
+            });
+        }
 
-    // menuLust delete button
-    if (loading && ['owner'].includes(projectRoleRef.current)) {
-        menuItemsRef.current.push({
-            name: 'Delete',
-            onClick: () => {
-                handleDeleteButton();
-            },
-        });
-    }
+        // Add Delete button for owners
+        if (projectRole === 'owner') {
+            items.push({
+                name: 'Delete',
+                onClick: handleDeleteButton,
+            });
+        }
 
-    if (loading) setLoading(false);
+        return items;
+    }, [projectRole, project.is_archived]);
 
     function handleViewButton() {
         navigateTo(`/projects/${project.id}`);
     }
 
     async function handleArchiveButton() {
-        const { data, error } = await ProjectAPI.archiveProject(project.id);
-        if (error) console.error(error);
-        reloadProjects();
+        try {
+            await ProjectAPI.archiveProject(project.id);
+            reloadProjects();
+        } catch (error) {
+            console.error('Error archiving project:', error);
+        }
     }
 
     async function handleSetActiveButton() {
-        const { data, error } = await ProjectAPI.unarchiveProject(project.id);
-        if (error) console.error(error);
-        reloadProjects();
+        try {
+            await ProjectAPI.unarchiveProject(project.id);
+            reloadProjects();
+        } catch (error) {
+            console.error('Error unarchiving project:', error);
+        }
     }
 
     async function handleDeleteButton() {
-        const { error } = await ProjectAPI.deleteProject(project.id);
-        if (error) console.error(error);
-        reloadProjects();
+        try {
+            await ProjectAPI.deleteProject(project.id);
+            reloadProjects();
+        } catch (error) {
+            console.error('Error deleting project:', error);
+        }
     }
 
     return (
-        <tr>
-            <td>{project.name}</td>
-            <td>
-                {
-                    <ProjectListItemTeam
-                        key={project.project_member.user_id}
-                        members={project.project_member}
-                    />
-                }
+        <tr className="text-sm md:text-base">
+            <td className="p-2">{project.name}</td>
+            <td className="p-2">
+                <ProjectListItemTeam
+                    key={project.project_member.user_id}
+                    members={project.project_member}
+                />
             </td>
-            <td>
-                <MenuDefault menuItems={menuItemsRef.current} />
+            <td className="px-1 py-2 text-center">
+                <MenuDefault menuItems={menuItems} />
             </td>
         </tr>
     );
