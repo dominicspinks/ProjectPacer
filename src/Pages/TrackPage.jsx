@@ -145,7 +145,7 @@ export default function TrackPage({ projectNames }) {
     }, [selectedProjectId, selectedProject]);
 
     return (
-        <div className='block p-4 m-2 rounded-lg shadow bg-gray-900'>
+        <div className='block p-4 m-2 rounded-lg shadow bg-gray-900 w-[95%] md:max-w-xl'>
             <h5 className='mb-2 text-2xl font-bold tracking-tight'>
                 Time Tracker
             </h5>

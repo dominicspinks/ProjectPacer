@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useMemo } from 'react';
 
 // Components
 import MenuButton from '../Buttons/MenuButton';
@@ -10,34 +10,34 @@ export default function ProjectMembersListItem({
     handleRemoveInvite = () => { },
     isInvited = false,
 }) {
-    const [loading, setLoading] = useState(true);
+    const menuItems = useMemo(() => {
+        const items = [];
 
-    const menuItemsRef = useRef([]);
+        // Only add Remove option if user has right permissions and target is not an owner
+        if (
+            ['owner', 'manager'].includes(projectRole) &&
+            member.role_type.role_type !== 'owner'
+        ) {
+            items.push({
+                name: 'Remove',
+                onClick: handleRemoveButton,
+            });
+        }
 
-    // menuList remove button
-    if (
-        loading &&
-        ['owner', 'manager'].includes(projectRole) &&
-        member.role_type.role_type !== 'owner'
-    ) {
-        menuItemsRef.current.push({
-            name: 'Remove',
-            onClick: () => {
-                handleRemoveButton();
-            },
-        });
-    }
+        return items;
+    }, [projectRole, member.role_type.role_type]);
 
-    if (loading) setLoading(false);
-
+    // Handle remove action based on member type (invited or active)
     function handleRemoveButton() {
-        if (!isInvited) handleRemoveMember(member.user_id);
-
-        if (isInvited) handleRemoveInvite(member.id);
+        if (!isInvited) {
+            handleRemoveMember(member.user_id);
+        } else {
+            handleRemoveInvite(member.id);
+        }
     }
 
     return (
-        <tr>
+        <tr className="text-sm md:text-base">
             <td className={`${isInvited ? 'italic' : ''}`}>
                 {!isInvited ? member.profile.full_name : member.email}
             </td>
@@ -45,8 +45,10 @@ export default function ProjectMembersListItem({
                 {member.role_type.role_type}
                 {isInvited && <span className='italic'> [invited]</span>}
             </td>
-            <td>
-                <MenuButton menuItems={menuItemsRef.current} />
+            <td className="px-1 py-2 text-center w-[10%]">
+                {menuItems.length > 0 && (
+                    <MenuButton menuItems={menuItems} />
+                )}
             </td>
         </tr>
     );

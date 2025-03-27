@@ -107,7 +107,7 @@ export default function ProjectsPage({ projectNames, reloadProjects }) {
             {loading ? (
                 <SpinnerIcon />
             ) : (
-                <div className='block p-2 m-2 rounded-lg shadow bg-gray-900 max-w-full'>
+                <div className='block p-4 m-2 rounded-lg shadow bg-gray-900 w-[95%] md:max-w-xl'>
                     <h5 className='mb-2 text-2xl font-bold tracking-tight mb-4'>
                         My Projects
                     </h5>
@@ -120,7 +120,7 @@ export default function ProjectsPage({ projectNames, reloadProjects }) {
 
                     <NewProjectModal
                         visible={showModal}
-                        handleCleanModal={cleanModal}
+                        handleCloseModal={cleanModal}
                         handleAddProject={handleAddProject}
                         handleNewProjectName={handleNewProjectName}
                         handleNewProjectDescription={handleNewProjectDescription}

@@ -50,7 +50,6 @@ export default function ProjectList({
 
     return (
         <div className="w-full overflow-x-auto">
-            {/* Filter Controls - Stack on mobile, row on larger screens */}
             <div className='flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4'>
                 <select
                     name='projectStatus'
@@ -85,14 +84,13 @@ export default function ProjectList({
                 </div>
             </div>
 
-            {/* Project Table with horizontal scroll on small screens */}
             <div className="overflow-x-auto">
                 <table className="min-w-full table-auto">
                     <thead className="bg-gray-700">
                         <tr>
-                            <th className="px-2 py-1 text-left align-middle h-10 min-w-[100px]">Name</th>
-                            <th className="px-2 py-1 text-left align-middle h-10">Team</th>
-                            <th className="py-1 text-center align-middle h-10 max-w-[30px] px-0">
+                            <th className="px-2 py-1 text-left align-middle h-10 w-[60%]">Name</th>
+                            <th className="px-2 py-1 text-left align-middle h-10 w-[30%]">Team</th>
+                            <th className="py-1 text-center align-middle h-10 w-[10%] px-0">
                                 <button
                                     className='bg-blue-500 text-sm hover:bg-blue-700 text-white font-bold rounded inline-flex items-center justify-center p-1'
                                     onClick={() => setShowModal(true)}>

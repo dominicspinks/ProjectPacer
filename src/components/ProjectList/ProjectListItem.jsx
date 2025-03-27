@@ -91,7 +91,7 @@ export default function ProjectListItem({ project, reloadProjects }) {
                     members={project.project_member}
                 />
             </td>
-            <td className="px-1 py-2 text-center">
+            <td className="px-1 py-2 text-center w-[10%]">
                 <MenuDefault menuItems={menuItems} />
             </td>
         </tr>
