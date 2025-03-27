@@ -35,7 +35,7 @@ export default function ProjectDetailsPage() {
         }
 
         setProject(data);
-        console.log('setProject', data);
+
         projectRoleRef.current = data?.project_member?.find(
             (member) => member.user_id === user.id
         )?.role_type.role_type;

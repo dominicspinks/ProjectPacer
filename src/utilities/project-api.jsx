@@ -115,7 +115,7 @@ export async function getProject(userId, projectId) {
         )
         .eq('id', projectId)
         .limit(1);
-    console.log('project details', data);
+
     if (error || data.length === 0) {
         console.error(error);
         return { error: error };

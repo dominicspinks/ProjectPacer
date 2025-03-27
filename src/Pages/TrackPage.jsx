@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-
-// Contexts
 import { useAuth } from '../contexts/AuthProvider';
-
-// APIs
 import * as TaskAPI from '../utilities/task-api';
+import { safeApiCall } from '../utilities/api-utilities';
+import useTimer from '../hooks/useTimer';
 
 export default function TrackPage({ projectNames }) {
     const { user } = useAuth();
@@ -15,132 +13,120 @@ export default function TrackPage({ projectNames }) {
     const [taskList, setTaskList] = useState([]);
     const [taskSelected, setTaskSelected] = useState(0);
     const [activeTask, setActiveTask] = useState(null);
-    const [sessionTime, setSessionTime] = useState('00:00:00');
     const [accumulatedTime, setAccumulatedTime] = useState('00:00:00');
 
-    const formatDuration = (seconds) => {
-        if (!seconds || seconds <= 0) return '00:00:00';
-        const hours = String(Math.floor(seconds / 3600)).padStart(2, '0');
-        const minutes = String(Math.floor((seconds % 3600) / 60)).padStart(
-            2,
-            '0'
-        );
-        const secs = String(seconds % 60).padStart(2, '0');
-        return `${hours}:${minutes}:${secs}`;
-    };
+    // Use custom timer hook
+    const { sessionTime, formatDuration } = useTimer(activeTask);
 
-    useEffect(() => {
-        function calculateTimeDifference() {
-            if (!activeTask) {
-                setSessionTime('00:00:00');
-                return;
-            }
-
-            if (activeTask.duration !== null) {
-                setSessionTime(formatDuration(activeTask.duration));
-                return;
-            }
-
-            const now = new Date();
-            const createdTime = new Date(activeTask.created_at);
-            const diffInSeconds = Math.floor((now - createdTime) / 1000);
-
-            setSessionTime(formatDuration(diffInSeconds));
-        }
-
-        if (activeTask && activeTask.duration === null) {
-            const interval = setInterval(calculateTimeDifference, 1000);
-            return () => clearInterval(interval);
-        } else {
-            calculateTimeDifference();
-        }
-    }, [activeTask]);
+    // Memoize the selected project
+    const selectedProject = useMemo(() => {
+        return projectNames.find(p => p.id === +selectedProjectId);
+    }, [projectNames, selectedProjectId]);
 
     // Set the start date of the current week (monday)
-    const weekStartDate = new Date();
-    weekStartDate.setDate(
-        weekStartDate.getDate() -
-        (weekStartDate.getDay() === 0 ? 6 : weekStartDate.getDay() - 1)
-    );
+    const weekStartDate = useMemo(() => {
+        const date = new Date();
+        date.setDate(
+            date.getDate() -
+            (date.getDay() === 0 ? 6 : date.getDay() - 1)
+        );
+        return date;
+    }, []);
 
-    async function handleSelectProject(e) {
-        setSelectedProjectId(e.target.value);
-        if (e.target.value === 0) return;
+    // Load tasks when project changes
+    const handleSelectProject = useCallback(async (e) => {
+        const newProjectId = +e.target.value;
+        setSelectedProjectId(newProjectId);
+        setTaskSelected(0);
+
+        if (newProjectId === 0) {
+            setTaskList([]);
+            return;
+        }
 
         // Get task list for the selected project
-        const { data, error } = await TaskAPI.getTaskList(e.target.value);
+        const { data: tasks, success } = await safeApiCall(() =>
+            TaskAPI.getTaskList(newProjectId)
+        );
 
-        if (error) {
-            console.error(error);
-            return;
+        if (success) {
+            setTaskList(tasks);
+            // Get accumulated time for the selected project
+            await getAccumulatedTime(newProjectId);
         }
-        setTaskList(data);
+    }, []);
 
-        // Get accumulated time for the selected project
-        await getAccumulatedTime(e.target.value);
-    }
+    const getAccumulatedTime = useCallback(async (projectId = selectedProjectId) => {
+        if (projectId === 0) return;
 
-    async function getAccumulatedTime(projectId = selectedProjectId) {
-        const { data, error } = await TaskAPI.getAccumulatedTime(projectId);
+        const { data, success } = await safeApiCall(() =>
+            TaskAPI.getAccumulatedTime(projectId)
+        );
 
-        if (error) {
-            console.error(error);
-            return;
+        if (success) {
+            setAccumulatedTime(formatDuration(data));
         }
-        setAccumulatedTime(formatDuration(data));
-    }
+    }, [selectedProjectId, formatDuration]);
 
-    function handleSelectTask(e) {
-        setTaskSelected(e.target.value);
-        if (e.target.value === 0) {
-            setTaskList([]);
+    const handleSelectTask = useCallback((e) => {
+        setTaskSelected(+e.target.value);
+        if (+e.target.value === 0) {
             return;
         }
 
         // Clear active task
         setActiveTask(null);
-        setSessionTime('00:00:00');
-    }
+    }, []);
 
-    async function handleStartButton() {
+    const handleStartButton = useCallback(async () => {
         // Check for active timers to prevent changing task without stopping timer first
         if (activeTask?.duration === null || taskSelected === 0) return;
-        await startTaskTimer();
-    }
 
-    async function handleStopButton() {
+        const { data, success } = await safeApiCall(() =>
+            TaskAPI.addTaskTime(taskSelected, user.id)
+        );
+
+        if (success) {
+            setActiveTask(data);
+        }
+    }, [activeTask, taskSelected, user.id]);
+
+    const handleStopButton = useCallback(async () => {
         // Check for active timer
         if (!activeTask || activeTask?.duration) return;
 
-        // Set stop time
-        await stopTaskTimer();
-
-        // Get the new accumulated time for the selected project
-        await getAccumulatedTime();
-    }
-
-    async function handleGenerateReportButton() {
-        const { data, error } = await TaskAPI.getTaskTimeHistory(
-            selectedProjectId
+        const { data, success } = await safeApiCall(() =>
+            TaskAPI.updateTaskStopTime(activeTask.id)
         );
-        if (error) {
-            alert(error.message);
+
+        if (success) {
+            setActiveTask(data);
+            // Get the new accumulated time for the selected project
+            await getAccumulatedTime();
+        }
+    }, [activeTask, getAccumulatedTime]);
+
+    const handleGenerateReportButton = useCallback(async () => {
+        const { data, success } = await safeApiCall(() =>
+            TaskAPI.getTaskTimeHistory(selectedProjectId)
+        );
+
+        if (!success) {
             return;
         }
+
         if (data.length === 0) {
             alert('This project does not have any task timer history');
             return;
         }
-        exportToExcel(data);
-    }
 
-    function exportToExcel(exportData) {
-        const worksheet = XLSX.utils.json_to_sheet(exportData);
+        // Export data to Excel
+        const worksheet = XLSX.utils.json_to_sheet(data);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(
             workbook,
             worksheet,
-            projectNames.find((p) => p.id === +selectedProjectId).name
+            selectedProject?.name || 'Report'
         );
 
         // Buffer to store the generated Excel file
@@ -154,46 +140,20 @@ export default function TrackPage({ projectNames }) {
 
         saveAs(
             blob,
-            `Task History - ${projectNames.find((p) => p.id === +selectedProjectId).name
-            }.xlsx`
+            `Task History - ${selectedProject?.name || 'Project'}.xlsx`
         );
-    }
-
-    async function startTaskTimer() {
-        // Create new entry in task_time table
-        const { data, error } = await TaskAPI.addTaskTime(
-            taskSelected,
-            user.id
-        );
-
-        if (error) {
-            console.error(error);
-            return;
-        }
-        setActiveTask(data);
-    }
-
-    async function stopTaskTimer() {
-        // Update stopped_at field in task_time table
-        const { data, error } = await TaskAPI.updateTaskStopTime(activeTask.id);
-        if (error) {
-            console.error(error);
-            return;
-        }
-        setActiveTask(data);
-    }
+    }, [selectedProjectId, selectedProject]);
 
     return (
-        <div className='block p-6  border  rounded-lg shadow bg-gray-800 border-gray-700'>
-            <h5 className='mb-2 text-2xl font-bold tracking-tight mb-4'>
+        <div className='block p-4 m-2 rounded-lg shadow bg-gray-900'>
+            <h5 className='mb-2 text-2xl font-bold tracking-tight'>
                 Time Tracker
             </h5>
-            <div className='grid grid-cols-2 gap-4'>
-                <div className='col-span-2 w-full'>
+            <div className='flex flex-col gap-4'>
+                <div className='w-full'>
                     <label htmlFor='project'>Active Project</label>
                     <select
-                        className={`pr-8 w-full ${selectedProjectId === 0 ? 'italic' : 'not-italic'
-                            }`}
+                        className={`pr-8 w-full ${selectedProjectId === 0 ? 'italic' : 'not-italic'}`}
                         id='project'
                         onChange={handleSelectProject}>
                         <option className='italic' value={0}>
@@ -209,15 +169,17 @@ export default function TrackPage({ projectNames }) {
                         ))}
                     </select>
                 </div>
+
                 <div className='w-full'>
                     <label htmlFor='task'>Task Type</label>
                     <select
                         className={`pr-8 w-full ${taskSelected === 0 || taskList.length === 0
-                                ? 'italic'
-                                : 'not-italic'
+                            ? 'italic'
+                            : 'not-italic'
                             }`}
                         id='task'
-                        onChange={handleSelectTask}>
+                        onChange={handleSelectTask}
+                        disabled={selectedProjectId === 0}>
                         <option className='italic' value={0}>
                             {taskList.length === 0
                                 ? 'No Available Tasks'
@@ -233,62 +195,62 @@ export default function TrackPage({ projectNames }) {
                         ))}
                     </select>
                 </div>
-                <div className='border border-gray-700 rounded p-2'>
-                    <p>Current Week</p>
-                    <p>{weekStartDate.toLocaleDateString('en-AU')}</p>
-                </div>
-                <div>
+
+                <div className='grid grid-cols-3 gap-3'>
                     <button
-                        className={`w-full h-full bg-green-500 text-white rounded border border-gray-700 hover:bg-green-700 ${activeTask?.duration === null ? 'disabled' : ''
-                            }`}
-                        disabled={activeTask?.duration === null}
+                        className='bg-green-500 text-white rounded border border-gray-700 hover:bg-green-700 p-2 disabled:opacity-50 disabled:cursor-not-allowed'
+                        disabled={activeTask?.duration === null || taskSelected === 0}
                         onClick={handleStartButton}>
                         Start
                     </button>
-                </div>
-                <div className='border border-gray-700 rounded p-2'>
-                    <p>Working Task Start Time</p>
-                    <p>
-                        {activeTask?.created_at
-                            ? new Date(
-                                activeTask.created_at
-                            ).toLocaleTimeString('en-AU', {
-                                hourCycle: 'h23',
-                            }) +
-                            ' ' +
-                            new Date(
-                                activeTask.created_at
-                            ).toLocaleDateString('en-AU')
-                            : '--'}
-                    </p>
-                </div>
-                <div>
+
                     <button
-                        className={`w-full h-full bg-red-500 text-white rounded border border-gray-700 hover:bg-red-700 ${activeTask?.duration === null
-                                ? ''
-                                : 'disabled:cursor-not-allowed disabled'
-                            }`}
+                        className='bg-red-500 text-white rounded border border-gray-700 hover:bg-red-700 p-2 disabled:opacity-50 disabled:cursor-not-allowed'
                         disabled={!activeTask || activeTask.duration !== null}
                         onClick={handleStopButton}>
                         Stop
                     </button>
-                </div>
-                <div className='border border-gray-700 rounded p-2'>
-                    <p>Session Time</p>
-                    <p>{sessionTime}</p>
-                </div>
 
-                <div>
                     <button
-                        className={`w-full h-full bg-blue-500 text-white rounded border border-gray-700 hover:bg-blue-700 ${activeTask?.StopTime ? 'cursor-not-allowed' : ''
-                            }`}
-                        onClick={handleGenerateReportButton}>
+                        className='bg-blue-500 text-white rounded border border-gray-700 hover:bg-blue-700 p-2 disabled:opacity-50 disabled:cursor-not-allowed'
+                        onClick={handleGenerateReportButton}
+                        disabled={selectedProjectId === 0}>
                         Generate Report
                     </button>
                 </div>
-                <div className='border border-gray-700 rounded p-2'>
-                    <p>Accumulated Hours</p>
-                    <p>{accumulatedTime}</p>
+
+                <div className='grid grid-cols-2 gap-3 md:grid-cols-4'>
+                    <div className='border border-gray-700 rounded p-2'>
+                        <p className='text-sm font-medium'>Current Week</p>
+                        <p>{weekStartDate.toLocaleDateString('en-AU')}</p>
+                    </div>
+
+                    <div className='border border-gray-700 rounded p-2'>
+                        <p className='text-sm font-medium'>Working Task Start</p>
+                        <p>
+                            {activeTask?.created_at
+                                ? new Date(
+                                    activeTask.created_at
+                                ).toLocaleTimeString('en-AU', {
+                                    hourCycle: 'h23',
+                                }) +
+                                ' ' +
+                                new Date(
+                                    activeTask.created_at
+                                ).toLocaleDateString('en-AU')
+                                : '--'}
+                        </p>
+                    </div>
+
+                    <div className='border border-gray-700 rounded p-2'>
+                        <p className='text-sm font-medium'>Session Time</p>
+                        <p>{sessionTime}</p>
+                    </div>
+
+                    <div className='border border-gray-700 rounded p-2'>
+                        <p className='text-sm font-medium'>Accumulated Hours</p>
+                        <p>{accumulatedTime}</p>
+                    </div>
                 </div>
             </div>
         </div>

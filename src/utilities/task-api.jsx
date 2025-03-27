@@ -38,7 +38,7 @@ export async function updateTaskStopTime(taskTimeId) {
         .update({ stopped_at: stoppedAt })
         .eq('id', taskTimeId)
         .select();
-    console.log(data, error);
+
     if (error) throw new Error(error.message);
     return { data: data[0] };
 }
