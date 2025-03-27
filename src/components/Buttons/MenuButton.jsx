@@ -5,8 +5,6 @@ import {
     MenuItem,
     Button,
 } from '@material-tailwind/react';
-
-// Components
 import MenuIcon from '../Icons/MenuIcon';
 
 export default function MenuDefault({ menuItems }) {

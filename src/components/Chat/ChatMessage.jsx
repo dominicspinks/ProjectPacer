@@ -1,6 +1,4 @@
-import { useState, useRef } from 'react';
-
-// Contexts
+import { useRef } from 'react';
 import { useAuth } from '../../contexts/AuthProvider';
 
 export default function ChatMessage({ message, projectMembers }) {

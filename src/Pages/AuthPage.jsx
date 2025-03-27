@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-// Contexts
 import { useAuth } from '../contexts/AuthProvider';
-
-// Components
 import LoginForm from '../components/Forms/LoginForm';
 import SignupForm from '../components/Forms/SignupForm';
 

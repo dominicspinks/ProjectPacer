@@ -1,13 +1,6 @@
 import { useState } from 'react';
-
-// API
 import * as ProjectAPI from '../../utilities/project-api';
-
-// Components
 import ProjectTaskListItem from './ProjectTaskListItem';
-
-// Icons
-import { XMarkIcon } from '@heroicons/react/24/outline';
 import AddTaskModal from '../Modals/AddTaskModal';
 import { PlusIcon } from '@heroicons/react/24/solid';
 

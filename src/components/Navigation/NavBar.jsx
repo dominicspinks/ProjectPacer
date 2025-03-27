@@ -1,6 +1,4 @@
 import { NavLink } from 'react-router-dom';
-
-// Contexts
 import { useAuth } from '../../contexts/AuthProvider';
 import { useState } from 'react';
 

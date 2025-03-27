@@ -1,12 +1,6 @@
 import { useRef } from 'react';
-
-// Contexts
 import { useAuth } from '../../contexts/AuthProvider';
-
-// API
 import * as ProjectAPI from '../../utilities/project-api';
-
-// Components
 import MenuButton from '../Buttons/MenuButton';
 
 export default function ProjectInviteListItem({ invite, reloadProjects }) {

@@ -1,4 +1,3 @@
-// Components
 import MenuButton from '../Buttons/MenuButton';
 
 export default function UserDefaultTaskListItem({

@@ -10,7 +10,6 @@ export default function NewProjectModal({
     projectDescription,
     projectNameUnique
 }) {
-    // Define the body content
     const modalBody = (
         <div className='flex flex-col gap-4 p-4 flex-auto'>
             <div className='flex flex-col gap-2'>
@@ -52,7 +51,6 @@ export default function NewProjectModal({
         </div>
     );
 
-    // Define the buttons
     const modalButtons = [
         {
             label: 'Close',

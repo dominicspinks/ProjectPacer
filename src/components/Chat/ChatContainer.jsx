@@ -1,18 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
-
 import { supabaseClient } from '../../config/supabase-client';
-
-// API
 import * as MessageAPI from '../../utilities/messages-api';
 import * as ProjectAPI from '../../utilities/project-api';
-
-// contexts
 import { useAuth } from '../../contexts/AuthProvider';
-
-// Components
 import ChatMessage from './ChatMessage';
-
-// Icons
 import {
     ChatBubbleLeftRightIcon,
     PaperAirplaneIcon,

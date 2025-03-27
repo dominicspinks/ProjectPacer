@@ -1,13 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-
-// Contexts
 import { useAuth } from '../contexts/AuthProvider';
-
-// API
 import * as ProjectAPI from '../utilities/project-api';
-
-// Components
 import ProjectMembersList from '../components/ProjectMembersList/ProjectMembersList';
 import ProjectTaskList from '../components/ProjectTaskList/ProjectTaskList';
 import SpinnerIcon from '../components/Icons/SpinnerIcon';
@@ -50,7 +44,6 @@ export default function ProjectDetailsPage() {
         );
         getProjectDetails();
 
-        // If a member removes themselves from a group, they should be navigated back to the project list page
         if (user.id === userId) {
             navigateTo('/projects');
         }

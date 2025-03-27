@@ -1,17 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-
-// Contexts
 import { useAuth } from './contexts/AuthProvider';
-
-// Components
 import ProtectedRoute from './routes/ProtectedRoute';
 import ChatContainer from './components/Chat/ChatContainer';
-
-// APIs
 import * as ProjectAPI from './utilities/project-api';
-
-// Pages
 import AuthPage from './Pages/AuthPage';
 import NavBar from './components/Navigation/NavBar';
 import ProjectsPage from './Pages/ProjectsPage';

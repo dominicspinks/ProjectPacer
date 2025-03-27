@@ -1,7 +1,4 @@
-// Contexts
 import { useAuth } from '../../contexts/AuthProvider';
-
-// Components
 import ProjectInviteListItem from './ProjectInviteListItem';
 
 export default function ProjectInvitesList({ reloadProjects }) {

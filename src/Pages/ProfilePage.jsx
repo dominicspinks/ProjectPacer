@@ -1,13 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-// API
 import * as ProfileAPI from '../utilities/profile-api';
-
-// Contexts
 import { useAuth } from '../contexts/AuthProvider';
-
-// Components
 import ProjectInviteList from '../components/ProjectInviteList/ProjectInviteList';
 import TaskList from '../components/TaskList/TaskList';
 

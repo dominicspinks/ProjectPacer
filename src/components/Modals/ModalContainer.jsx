@@ -1,15 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
-/**
- * A reusable modal container component
- * @param {Object} props - Component props
- * @param {boolean} props.visible - Whether the modal is visible
- * @param {Function} props.handleCloseModal - Function to close the modal
- * @param {string} props.title - Modal title
- * @param {React.ReactNode} props.body - Modal body content
- * @param {Array<{label: string, onClick: Function, primary: boolean}>} props.buttons - Array of button configurations
- * @returns {React.ReactNode} - Modal component
- */
 export default function ModalContainer({
     visible,
     handleCloseModal,
