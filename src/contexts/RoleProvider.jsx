@@ -1,44 +1,42 @@
 import { useContext, useState, useEffect, createContext } from 'react';
-
-// APIs
 import * as roleAPI from '../utilities/role-api';
 
 // create a context for authentication
 const RoleContext = createContext({
-	roles: null,
+    roles: null,
 });
 
 export const RoleProvider = ({ children }) => {
-	const [roles, setRoles] = useState([]);
-	const [loading, setLoading] = useState(true);
+    const [roles, setRoles] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-	useEffect(() => {
-		getRoles();
-	}, []);
+    useEffect(() => {
+        getRoles();
+    }, []);
 
-	async function getRoles() {
-		const { roles, error } = await roleAPI.getRoles();
-		if (error) {
-			console.error(error);
-			return;
-		}
-		setRoles(roles);
-		setLoading(false);
-	}
+    async function getRoles() {
+        const { roles, error } = await roleAPI.getRoles();
+        if (error) {
+            console.error(error);
+            return;
+        }
+        setRoles(roles);
+        setLoading(false);
+    }
 
-	const value = {
-		roles,
-	};
+    const value = {
+        roles,
+    };
 
-	// use a provider to pass down the value
-	return (
-		<RoleContext.Provider value={value}>
-			{!loading && children}
-		</RoleContext.Provider>
-	);
+    // use a provider to pass down the value
+    return (
+        <RoleContext.Provider value={value}>
+            {!loading && children}
+        </RoleContext.Provider>
+    );
 };
 
 // export the useAuth hook
 export const useRoles = () => {
-	return useContext(RoleContext);
+    return useContext(RoleContext);
 };

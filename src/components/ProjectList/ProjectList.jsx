@@ -1,135 +1,119 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useAuth } from '../../contexts/AuthProvider';
-
-// Components
-import ProjectListItem from '../ProjectListItem/ProjectListItem';
+import ProjectListItem from './ProjectListItem';
+import { PlusIcon } from '@heroicons/react/24/outline';
 
 export default function ProjectList({
-	projects,
-	reloadProjects,
-	setShowModal,
+    projects,
+    reloadProjects,
+    setShowModal,
 }) {
-	const [filterProjectStatus, setFilterProjectStatus] = useState('active');
-	const [filterOwner, setFilterOwner] = useState(false);
-	const [filterProjectName, setFilterProjectName] = useState('');
-	const [filteredProjects, setFilteredProjects] = useState([...projects]);
-	const { user } = useAuth();
+    const [filterProjectStatus, setFilterProjectStatus] = useState('active');
+    const [filterOwner, setFilterOwner] = useState(false);
+    const [filterProjectName, setFilterProjectName] = useState('');
+    const { user } = useAuth();
 
-	// Filter values to be removed from the useEffect and called directly from the change handler
-	useEffect(() => {
-		// This will update the filtered list and reapply the filters if the 'projects' state or any filters are updated
-		filterList();
-	}, [projects, filterProjectName, filterProjectStatus, filterOwner]);
+    const filteredProjects = useMemo(() => {
+        return projects.filter(project => {
+            // Check owner filter
+            if (filterOwner) {
+                const isOwner = project.project_member.some(
+                    member => member.role_type.role_type === 'owner' && member.user_id === user.id
+                );
+                if (!isOwner) return false;
+            }
 
-	function filterList() {
-		// Filter the list of projects based on the selected search filters
-		const filteredList = [];
+            // Check project status filter
+            if (project.is_archived !== (filterProjectStatus === 'archived')) return false;
 
-		for (let i = 0; i < projects.length; i++) {
-			const project = projects[i];
+            // Check project name filter
+            if (
+                filterProjectName.length > 0 &&
+                !project.name.toLowerCase().startsWith(filterProjectName.toLowerCase())
+            ) return false;
 
-			// If filter applied and the user is not an owner, skip the project
-			if (
-				filterOwner &&
-				project.project_member.find((member) => {
-					return (
-						member.role_type.role_type === 'owner' &&
-						member.user_id === user.id
-					);
-				}) === undefined
-			)
-				continue;
+            return true;
+        });
+    }, [projects, filterProjectName, filterProjectStatus, filterOwner, user.id]);
 
-			// If filter applied and the project is not archived, skip the project
-			if (project.is_archived !== (filterProjectStatus === 'archived'))
-				continue;
+    function handleProjectNameChange(e) {
+        setFilterProjectName(e.target.value);
+    }
 
-			// If filter is not empty, and the project name doesn't match, skip the project
-			if (
-				filterProjectName.length > 0 &&
-				!project.name
-					.toLowerCase()
-					.startsWith(filterProjectName.toLowerCase())
-			)
-				continue;
+    function handleProjectStatusChange(e) {
+        setFilterProjectStatus(e.target.value);
+    }
 
-			// Add the project to the filtered list
-			filteredList.push(project);
-		}
+    function handleToggleOwner(e) {
+        setFilterOwner(e.target.checked);
+    }
 
-		setFilteredProjects([...filteredList]);
-	}
+    return (
+        <div className="w-full overflow-x-auto">
+            <div className='flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4'>
+                <select
+                    name='projectStatus'
+                    onChange={handleProjectStatusChange}
+                    className='px-3 py-2 bg-gray-700 rounded w-full md:w-auto'>
+                    <option value='active'>Active</option>
+                    <option value='archived'>Archived</option>
+                </select>
 
-	function handleProjectNameChange(e) {
-		setFilterProjectName(e.target.value);
-	}
+                <div className='flex flex-col sm:flex-row gap-2 sm:items-center w-full md:w-auto'>
+                    <label htmlFor='projectName' className="whitespace-nowrap">Project Name</label>
+                    <input
+                        type='text'
+                        id='projectName'
+                        onChange={handleProjectNameChange}
+                        placeholder='search'
+                        value={filterProjectName}
+                        className='px-3 py-2 bg-gray-700 rounded w-full'
+                    />
+                </div>
 
-	function handleProjectStatusChange(e) {
-		setFilterProjectStatus(e.target.value);
-	}
+                <div className='flex items-center gap-2'>
+                    <label htmlFor='toggleOwner' className="whitespace-nowrap text-sm">
+                        Show only projects I own
+                    </label>
+                    <input
+                        type='checkbox'
+                        id='toggleOwner'
+                        onChange={handleToggleOwner}
+                        className="h-4 w-4"
+                    />
+                </div>
+            </div>
 
-	function handleToggleOwner(e) {
-		setFilterOwner(e.target.checked);
-	}
+            <div className="overflow-x-auto">
+                <table className="min-w-full table-auto">
+                    <thead className="bg-gray-700">
+                        <tr>
+                            <th className="px-2 py-1 text-left align-middle h-10 w-[60%]">Name</th>
+                            <th className="px-2 py-1 text-left align-middle h-10 w-[30%]">Team</th>
+                            <th className="py-1 text-center align-middle h-10 w-[10%] px-0">
+                                <button
+                                    className='bg-blue-500 text-sm hover:bg-blue-700 text-white font-bold rounded inline-flex items-center justify-center p-1'
+                                    onClick={() => setShowModal(true)}>
+                                    <PlusIcon className='w-5 h-5 text-white hover:text-gray-300' />
+                                </button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredProjects.map((project) => (
+                            <ProjectListItem
+                                key={project.id}
+                                project={project}
+                                reloadProjects={reloadProjects}
+                            />
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
-	return (
-		<>
-			<div className='flex justify-between items-center mb-4'>
-				<select
-					name='projectStatus'
-					onChange={handleProjectStatusChange}
-					className='pr-10'>
-					<option value='active'>Active</option>
-					<option value='archived'>Archived</option>
-				</select>
-				<div className='flex gap-4 items-center justify-between'>
-					<label htmlFor='projectName'>Project Name</label>
-					<input
-						type='text'
-						id='projectName'
-						onChange={handleProjectNameChange}
-						placeholder='search'
-						value={filterProjectName}
-					/>
-				</div>
-				<div className='flex gap-2 items-center'>
-					<label htmlFor='toggleOwner'>
-						Show only projects I own
-					</label>{' '}
-					<input
-						type='checkbox'
-						id='toggleOwner'
-						onChange={handleToggleOwner}
-					/>
-				</div>
-			</div>
-			<table>
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Team</th>
-						<th>
-							<button
-								className='bg-blue-500 text-sm  hover:bg-blue-700 text-white font-bold py-1 px-2 rounded'
-								onClick={() => setShowModal(true)}>
-								New Project
-							</button>
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					{filteredProjects.map((project) => (
-						<ProjectListItem
-							key={project.id}
-							project={project}
-							reloadProjects={reloadProjects}
-						/>
-					))}
-				</tbody>
-			</table>
-			{filteredProjects?.length === 0 && (
-				<p className='italic'>No projects found</p>
-			)}
-		</>
-	);
+            {filteredProjects?.length === 0 && (
+                <p className='italic text-center mt-4'>No projects found</p>
+            )}
+        </div>
+    );
 }
