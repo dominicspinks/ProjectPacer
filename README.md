@@ -75,11 +75,3 @@ View the user stories on [Trello](https://trello.com/b/QgCuHT1t/project-tracker)
 ## Wireframes
 
 View wireframes on [Moqups](https://app.moqups.com/JU95FL0o9E7Owk2xx8mETPBqvWlBonKw/view/page/ad64222d5).
-
-## Unsolved Problems and Hurdles
-
--   **Row Level Security (RLS)**: The implementation of RLS in Supabase was not completed, posing challenges for hosting the client on the internet without exposing the database to the public. This will be addressed in the next iteration.
-
--   **Supabase API Integration**: Learning and correctly utilizing the Supabase API presented challenges, particularly in managing user accounts/sessions and accessing user data.
-
--   **Use of useEffect**: Too much use of useEffect in the codebase. This will be addressed in the next iteration.
