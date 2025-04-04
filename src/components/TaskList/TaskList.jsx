@@ -64,7 +64,7 @@ export default function UserDefaultTaskList({
                 )}
             </table>
 
-            <NewTaskModal visible={showModal} handleCloseModal={cleanModal} handleSaveTask={handleSaveTask} currentTask={currentTask} setCurrentTask={setCurrentTask} />
+            <NewTaskModal visible={showModal} handleCloseModal={cleanModal} handleSaveTask={handleSaveTask} currentTask={currentTask} setCurrentTask={setCurrentTask} setShowModal={setShowModal} />
         </div>
     );
 }
