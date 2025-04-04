@@ -42,18 +42,19 @@ export default function ProjectMembersList({
     // Load list of invites for the project
     useEffect(() => {
         if (!project) return;
-        getProjectInvites();
+        if (projectRole === 'owner' || projectRole === 'manager') {
+            getProjectInvites();
+        }
     }, [project]);
 
     const getProjectInvites = useCallback(async () => {
         try {
             setIsLoading(true);
-            const { data, error } = await ProjectAPI.getProjectInvites(project.id);
+            const { data, error } = await ProjectAPI.getProjectInvites(project.id, user.id);
             if (error) throw error;
             setProjectInvites(data);
         } catch (err) {
             console.error("Failed to load project invites:", err);
-            // Consider adding a toast notification here
         } finally {
             setIsLoading(false);
         }
@@ -131,7 +132,7 @@ export default function ProjectMembersList({
     const handleRemoveInvite = useCallback(async (inviteId) => {
         setIsLoading(true);
         try {
-            const { error } = await ProjectAPI.removeProjectInvite(inviteId);
+            const { error } = await ProjectAPI.removeProjectInvite(inviteId, user.id);
             if (error) throw error;
             getProjectInvites();
         } catch (err) {

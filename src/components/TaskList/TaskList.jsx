@@ -57,7 +57,9 @@ export default function UserDefaultTaskList({
                     </tbody>
                 ) : (
                     <tbody>
-                        <td colSpan="3" className="text-left p-2 italic">No tasks available</td>
+                        <tr>
+                            <td colSpan="3" className="text-left p-2 italic">No tasks available</td>
+                        </tr>
                     </tbody>
                 )}
             </table>

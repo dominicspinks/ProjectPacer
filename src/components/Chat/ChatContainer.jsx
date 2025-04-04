@@ -125,7 +125,8 @@ export default function ChatContainer({ projectNames }) {
         if (projectNames.length === 0) return;
 
         const { data, error } = await ProjectAPI.getProjectMembers(
-            projectNames.map((project) => project.id)
+            projectNames.map((project) => project.id),
+            user.id
         );
 
         if (error) {

@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }) => {
         if (error) {
             console.error(error);
         }
+
         setUserProjectInvites(data);
     }
 

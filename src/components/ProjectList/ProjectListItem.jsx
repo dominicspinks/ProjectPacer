@@ -57,7 +57,7 @@ export default function ProjectListItem({ project, reloadProjects }) {
 
     async function handleArchiveButton() {
         try {
-            await ProjectAPI.archiveProject(project.id);
+            await ProjectAPI.archiveProject(user.id, project.id);
             reloadProjects();
         } catch (error) {
             console.error('Error archiving project:', error);
@@ -66,7 +66,7 @@ export default function ProjectListItem({ project, reloadProjects }) {
 
     async function handleSetActiveButton() {
         try {
-            await ProjectAPI.unarchiveProject(project.id);
+            await ProjectAPI.unarchiveProject(user.id, project.id);
             reloadProjects();
         } catch (error) {
             console.error('Error unarchiving project:', error);
@@ -75,7 +75,7 @@ export default function ProjectListItem({ project, reloadProjects }) {
 
     async function handleDeleteButton() {
         try {
-            await ProjectAPI.deleteProject(project.id);
+            await ProjectAPI.deleteProject(user.id, project.id);
             reloadProjects();
         } catch (error) {
             console.error('Error deleting project:', error);

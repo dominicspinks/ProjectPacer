@@ -3,12 +3,14 @@ import * as ProjectAPI from '../../utilities/project-api';
 import ProjectTaskListItem from './ProjectTaskListItem';
 import AddTaskModal from '../Modals/AddTaskModal';
 import { PlusIcon } from '@heroicons/react/24/solid';
+import { useAuth } from '../../contexts/AuthProvider';
 
 export default function ProjectTaskList({
     projectRole,
     project,
     handleReloadProjectDetails,
 }) {
+    const { user } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [fieldName, setFieldName] = useState('');
     const [fieldDescription, setFieldDescription] = useState('');
@@ -32,7 +34,8 @@ export default function ProjectTaskList({
         const { data, error } = await ProjectAPI.addProjectTask(
             project.id,
             fieldName,
-            fieldDescription
+            fieldDescription,
+            user.id
         );
 
         cleanModal();
@@ -40,7 +43,7 @@ export default function ProjectTaskList({
     }
 
     async function handleRemoveTask(taskId) {
-        const { error } = await ProjectAPI.removeProjectTask(taskId);
+        const { error } = await ProjectAPI.removeProjectTask(taskId, user.id);
 
         if (error) {
             console.error(error);

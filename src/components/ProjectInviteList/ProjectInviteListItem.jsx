@@ -37,7 +37,7 @@ export default function ProjectInviteListItem({ invite, reloadProjects }) {
 
         // Remove invite
         const { error: error_remove_invite } =
-            await ProjectAPI.removeProjectInvite(invite.id);
+            await ProjectAPI.removeProjectInvite(invite.id, user.id);
 
         if (error_remove_invite) {
             console.error(error_remove_invite);
@@ -49,7 +49,7 @@ export default function ProjectInviteListItem({ invite, reloadProjects }) {
     }
 
     async function handleDeclineButton() {
-        const { error } = await ProjectAPI.removeProjectInvite(invite.id);
+        const { error } = await ProjectAPI.removeProjectInvite(invite.id, user.id);
         if (error) {
             console.error(error);
             return;
