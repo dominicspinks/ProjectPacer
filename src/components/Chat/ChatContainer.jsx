@@ -28,6 +28,11 @@ export default function ChatContainer({ projectNames }) {
     const [fieldMessage, setFieldMessage] = useState('');
     const [projectMembers, setProjectMembers] = useState(new Map());
 
+    // Filter projectNames by is_archived
+    const filteredProjectNames = useMemo(() => {
+        return projectNames.filter((project) => !project.is_archived);
+    }, [projectNames]);
+
     useEffect(() => {
         // Get initial messages list
         getMessages();
@@ -58,7 +63,7 @@ export default function ChatContainer({ projectNames }) {
 
         // Flag that the user has unread messages for their projects
         if (
-            projectNames?.find(
+            filteredProjectNames?.find(
                 (project) => project.id === incomingMessage.project_id
             ) &&
             (!showMessages ||
@@ -74,12 +79,12 @@ export default function ChatContainer({ projectNames }) {
 
     // Update default fieldProjectId value if projectNames changes
     useMemo(() => {
-        if (projectNames.length === 0) return;
+        if (filteredProjectNames.length === 0) return;
 
-        setFieldProjectId(projectNames[0].id);
+        setFieldProjectId(filteredProjectNames[0].id);
         getProjectMembers();
         getMessages();
-    }, [projectNames]);
+    }, [filteredProjectNames]);
 
     // Filter the messages by the new fieldProjectId
     useMemo(() => {
@@ -122,10 +127,10 @@ export default function ChatContainer({ projectNames }) {
 
     // Get list of users belonging to the current list of projects
     async function getProjectMembers() {
-        if (projectNames.length === 0) return;
+        if (filteredProjectNames.length === 0) return;
 
         const { data, error } = await ProjectAPI.getProjectMembers(
-            projectNames.map((project) => project.id),
+            filteredProjectNames.map((project) => project.id),
             user.id
         );
 
@@ -139,8 +144,8 @@ export default function ChatContainer({ projectNames }) {
 
     // Get existing messages for the user's projects
     async function getMessages() {
-        if (projectNames.length === 0 || !user || !loadingMessages) return;
-        const { data, error } = await MessageAPI.getMessages(projectNames);
+        if (filteredProjectNames.length === 0 || !user || !loadingMessages) return;
+        const { data, error } = await MessageAPI.getMessages(filteredProjectNames);
         if (error) {
             console.error(error);
             return { error: error };
@@ -238,7 +243,7 @@ export default function ChatContainer({ projectNames }) {
                     onChange={handleProjectChange}
                     className={`pr-10 transition ease-in-out delay-150
                         ${!showMessages ? 'hidden' : 'flex-grow max-w-[70%]'}`}>
-                    {projectNames.map((project) => (
+                    {filteredProjectNames.map((project) => (
                         <option
                             key={project.id}
                             value={parseInt(project.id)}
