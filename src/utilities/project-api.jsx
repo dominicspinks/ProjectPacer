@@ -113,7 +113,7 @@ export async function getProjectNames(userId) {
 
     const { data, error } = await supabaseClient
         .from('project')
-        .select(`id,name,project_member!inner(user_id)`)
+        .select(`id,name, is_archived,project_member!inner(user_id)`)
         .eq('project_member.user_id', userId)
         .order('name', { ascending: true });
 

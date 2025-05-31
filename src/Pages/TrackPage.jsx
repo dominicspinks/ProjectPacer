@@ -222,7 +222,7 @@ export default function TrackPage({ projectNames }) {
                                     <option className='italic' value={0}>
                                         Select Project
                                     </option>
-                                    {projectNames.map((project) => (
+                                    {projectNames.filter((project) => !project.is_archived).map((project) => (
                                         <option
                                             className='not-italic'
                                             key={project.id}
