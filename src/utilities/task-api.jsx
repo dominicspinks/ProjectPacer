@@ -31,13 +31,15 @@ export async function addTaskTime(taskId, userId) {
 }
 
 // Update stopped_at for a task time entry
-export async function updateTaskStopTime(taskTimeId) {
+export async function updateTaskStopTime(taskTimeId, comment = '') {
     const stoppedAt = new Date().toISOString();
     const { data, error } = await supabaseClient
         .from('task_time')
-        .update({ stopped_at: stoppedAt })
+        .update({ stopped_at: stoppedAt, comment: comment })
         .eq('id', taskTimeId)
-        .select();
+        .select(
+            'id, user_id, profile!inner(full_name), project_task!inner(name), created_at, stopped_at, duration, comment'
+        );
 
     if (error) throw new Error(error.message);
     return { data: data[0] };
@@ -64,7 +66,7 @@ export async function getTaskTimeHistory(projectId) {
     const { data, error } = await supabaseClient
         .from('task_time')
         .select(
-            'profile!inner(full_name), project_task!inner(name), created_at, stopped_at, duration'
+            'id, user_id, profile!inner(full_name), project_task!inner(name), created_at, stopped_at, duration, comment'
         )
         .eq('project_task.project_id', projectId)
         .not('duration', 'is', null);
@@ -75,11 +77,26 @@ export async function getTaskTimeHistory(projectId) {
     }
 
     return {
-        data: transformData(data),
+        data, error
     };
 }
 
-function transformData(data) {
+// Delete a task history by task ID
+export async function deleteTaskHistory(taskId) {
+    const result = await supabaseClient
+        .from('task_time')
+        .delete()
+        .eq('id', taskId);
+
+    if (result.error) {
+        console.error(result.error);
+        return result;
+    }
+
+    return result;
+}
+
+export function transformDataForExport(data) {
     return data.map((item) => ({
         'Task Name': item.project_task.name,
         'Performed By': item.profile.full_name,
@@ -87,6 +104,7 @@ function transformData(data) {
         'Start Time': formatTimeString(item.created_at),
         'End Time': formatTimeString(item.stopped_at),
         'Duration (min)': Math.max(1, Math.round(+item.duration / 60)),
+        Comments: item.comment,
     }));
 }
 

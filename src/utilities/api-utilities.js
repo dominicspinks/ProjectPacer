@@ -6,12 +6,20 @@
  */
 export const safeApiCall = async (apiCall, errorCallback = console.error) => {
     try {
-        const { data, error } = await apiCall();
+        const result = await apiCall();
+
+        if (!result || typeof result !== 'object') {
+            throw new Error('API call did not return a valid response object');
+        }
+
+        const { data, error } = result;
+
         if (error) {
             errorCallback(error);
             return { data: null, success: false };
         }
-        return { data, success: true };
+
+        return { data: data ?? null, success: true };
     } catch (err) {
         errorCallback(err);
         return { data: null, success: false };
