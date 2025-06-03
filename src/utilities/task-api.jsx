@@ -77,7 +77,60 @@ export async function getTaskTimeHistory(projectId) {
     }
 
     return {
-        data, error
+        data,
+        error,
+    };
+}
+
+export async function getAllProjectsTaskTimeHistoryForWeek() {
+    const { data: userData, error: userError } =
+        await supabaseClient.auth.getUser();
+
+    if (userError || !userData?.user) {
+        console.error(userError || 'No user found');
+        return { error: userError || new Error('No user found') };
+    }
+
+    const userId = userData.user.id;
+
+    // Calculate the Monday of the current week
+    const now = new Date();
+    const day = now.getDay(); // 0 (Sun) to 6 (Sat)
+    const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Monday start
+    const monday = new Date(now.setDate(diff));
+    monday.setHours(0, 0, 0, 0);
+    const mondayISO = monday.toISOString();
+
+    // Get IDs of projects belonging to the user
+    const { data: projects, error: projectsError } = await supabaseClient
+        .from('project_member')
+        .select('project_id')
+        .eq('user_id', userId);
+
+    if (projectsError) {
+        console.error(projectsError);
+        return { error: projectsError };
+    }
+
+    const projectIds = projects.map((p) => p.project_id);
+
+    // Fetch task time records from current week for user's projects
+    const { data, error } = await supabaseClient
+        .from('task_time')
+        .select(
+            'profile!inner(full_name), project_task!inner(name, project!inner(id,name)), created_at, stopped_at, duration, comment'
+        )
+        .gte('created_at', mondayISO)
+        .not('duration', 'is', null)
+        .in('project_task.project.id', projectIds);
+
+    if (error) {
+        console.error(error);
+        return { error };
+    }
+
+    return {
+        data,
     };
 }
 
@@ -98,6 +151,7 @@ export async function deleteTaskHistory(taskId) {
 
 export function transformDataForExport(data) {
     return data.map((item) => ({
+        Project: item.project_task.project.name,
         'Task Name': item.project_task.name,
         'Performed By': item.profile.full_name,
         Date: formatDateString(item.created_at),

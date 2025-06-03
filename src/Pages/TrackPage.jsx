@@ -23,21 +23,19 @@ export default function TrackPage({ projectNames }) {
     const [showDeleteTaskModal, setShowDeleteTaskModal] = useState(false);
     const [taskIdToDelete, setTaskIdToDelete] = useState(null);
 
-
     // Use custom timer hook
     const { sessionTime, formatDuration } = useTimer(activeTask);
 
     // Memoize the selected project
     const selectedProject = useMemo(() => {
-        return projectNames.find(p => p.id === +selectedProjectId);
+        return projectNames.find((p) => p.id === +selectedProjectId);
     }, [projectNames, selectedProjectId]);
 
     // Set the start date of the current week (monday)
     const weekStartDate = useMemo(() => {
         const date = new Date();
         date.setDate(
-            date.getDate() -
-            (date.getDay() === 0 ? 6 : date.getDay() - 1)
+            date.getDate() - (date.getDay() === 0 ? 6 : date.getDay() - 1)
         );
         return date;
     }, []);
@@ -65,27 +63,29 @@ export default function TrackPage({ projectNames }) {
         await getAccumulatedTime(newProjectId);
 
         // Get task time history for the selected project
-        const { data: taskData, success: historySuccess } = await safeApiCall(() =>
-            TaskAPI.getTaskTimeHistory(newProjectId)
+        const { data: taskData, success: historySuccess } = await safeApiCall(
+            () => TaskAPI.getTaskTimeHistory(newProjectId)
         );
 
         if (historySuccess) {
             setTaskHistory([...taskData]);
         }
-
     }, []);
 
-    const getAccumulatedTime = useCallback(async (projectId = selectedProjectId) => {
-        if (projectId === 0) return;
+    const getAccumulatedTime = useCallback(
+        async (projectId = selectedProjectId) => {
+            if (projectId === 0) return;
 
-        const { data, success } = await safeApiCall(() =>
-            TaskAPI.getAccumulatedTime(projectId)
-        );
+            const { data, success } = await safeApiCall(() =>
+                TaskAPI.getAccumulatedTime(projectId)
+            );
 
-        if (success) {
-            setAccumulatedTime(formatDuration(data));
-        }
-    }, [selectedProjectId, formatDuration]);
+            if (success) {
+                setAccumulatedTime(formatDuration(data));
+            }
+        },
+        [selectedProjectId, formatDuration]
+    );
 
     const handleSelectTask = useCallback((e) => {
         setTaskSelected(+e.target.value);
@@ -143,21 +143,21 @@ export default function TrackPage({ projectNames }) {
     }, [activeTask, getAccumulatedTime, commentField, taskHistory]);
 
     const handleGenerateReportButton = useCallback(async () => {
-        const { data, success } = await safeApiCall(() =>
-            TaskAPI.getTaskTimeHistory(selectedProjectId)
-        );
-
-        if (!success) {
+        const { data, error } =
+            await TaskAPI.getAllProjectsTaskTimeHistoryForWeek();
+        if (error) {
+            alert(error.message);
             return;
         }
-
         if (data.length === 0) {
-            alert('This project does not have any task timer history');
+            alert('There is no task history');
             return;
         }
 
         // Export data to Excel
-        const worksheet = XLSX.utils.json_to_sheet(TaskAPI.transformDataForExport(data));
+        const worksheet = XLSX.utils.json_to_sheet(
+            TaskAPI.transformDataForExport(data)
+        );
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(
             workbook,
@@ -176,7 +176,7 @@ export default function TrackPage({ projectNames }) {
 
         saveAs(
             blob,
-            `Task History - ${selectedProject?.name || 'Project'}.xlsx`
+            `Task History - ${weekStartDate.toISOString().split('T')[0]}.xlsx`
         );
     }, [selectedProjectId, selectedProject]);
 
@@ -184,14 +184,19 @@ export default function TrackPage({ projectNames }) {
         return !taskHistory.some((task) => task.user_id !== user.id);
     }
 
-    const handleDeleteTaskHistory = useCallback(async (taskId) => {
-        const { error } = await TaskAPI.deleteTaskHistory(taskId);
+    const handleDeleteTaskHistory = useCallback(
+        async (taskId) => {
+            const { error } = await TaskAPI.deleteTaskHistory(taskId);
 
-        if (!error) {
-            setTaskHistory(prev => prev.filter((task) => task.id !== taskId));
-            setShowDeleteTaskModal(false);
-        }
-    }, [activeTask, taskHistory]);
+            if (!error) {
+                setTaskHistory((prev) =>
+                    prev.filter((task) => task.id !== taskId)
+                );
+                setShowDeleteTaskModal(false);
+            }
+        },
+        [activeTask, taskHistory]
+    );
 
     function openConfirmDeleteTaskModal(taskId) {
         setTaskIdToDelete(taskId);
@@ -216,30 +221,40 @@ export default function TrackPage({ projectNames }) {
                             <div className=''>
                                 <label htmlFor='project'>Active Project</label>
                                 <select
-                                    className={`pr-8 w-full ${selectedProjectId === 0 ? 'italic' : 'not-italic'}`}
+                                    className={`pr-8 w-full ${
+                                        selectedProjectId === 0
+                                            ? 'italic'
+                                            : 'not-italic'
+                                    }`}
                                     id='project'
                                     onChange={handleSelectProject}>
                                     <option className='italic' value={0}>
                                         Select Project
                                     </option>
-                                    {projectNames.filter((project) => !project.is_archived).map((project) => (
-                                        <option
-                                            className='not-italic'
-                                            key={project.id}
-                                            value={project.id}>
-                                            {project.name}
-                                        </option>
-                                    ))}
+                                    {projectNames
+                                        .filter(
+                                            (project) => !project.is_archived
+                                        )
+                                        .map((project) => (
+                                            <option
+                                                className='not-italic'
+                                                key={project.id}
+                                                value={project.id}>
+                                                {project.name}
+                                            </option>
+                                        ))}
                                 </select>
                             </div>
 
                             <div className='w-full'>
                                 <label htmlFor='task'>Task Type</label>
                                 <select
-                                    className={`pr-8 w-full ${taskSelected === 0 || taskList.length === 0
-                                        ? 'italic'
-                                        : 'not-italic'
-                                        }`}
+                                    className={`pr-8 w-full ${
+                                        taskSelected === 0 ||
+                                        taskList.length === 0
+                                            ? 'italic'
+                                            : 'not-italic'
+                                    }`}
                                     id='task'
                                     onChange={handleSelectTask}
                                     disabled={selectedProjectId === 0}>
@@ -263,22 +278,26 @@ export default function TrackPage({ projectNames }) {
                         <div className='grid grid-rows-1 sm:grid-rows-3 grid-cols-3 sm:grid-cols-1 gap-3 sm:w-48'>
                             <button
                                 className='bg-green-500 text-white rounded border border-gray-700 hover:bg-green-700 p-2 disabled:opacity-50 disabled:cursor-not-allowed'
-                                disabled={activeTask?.duration === null || taskSelected === 0}
+                                disabled={
+                                    activeTask?.duration === null ||
+                                    taskSelected === 0
+                                }
                                 onClick={handleStartButton}>
                                 Start
                             </button>
 
                             <button
                                 className='bg-red-500 text-white rounded border border-gray-700 hover:bg-red-700 p-2 disabled:opacity-50 disabled:cursor-not-allowed'
-                                disabled={!activeTask || activeTask.duration !== null}
+                                disabled={
+                                    !activeTask || activeTask.duration !== null
+                                }
                                 onClick={handleStopButton}>
                                 Stop
                             </button>
 
                             <button
                                 className='bg-blue-500 text-white rounded border border-gray-700 hover:bg-blue-700 p-2 disabled:opacity-50 disabled:cursor-not-allowed'
-                                onClick={handleGenerateReportButton}
-                                disabled={selectedProjectId === 0}>
+                                onClick={handleGenerateReportButton}>
                                 Generate Report
                             </button>
                         </div>
@@ -290,18 +309,20 @@ export default function TrackPage({ projectNames }) {
                         </div>
 
                         <div className='border border-gray-700 rounded p-2'>
-                            <p className='text-sm font-medium'>Working Task Start</p>
+                            <p className='text-sm font-medium'>
+                                Working Task Start
+                            </p>
                             <p>
                                 {activeTask?.created_at
                                     ? new Date(
-                                        activeTask.created_at
-                                    ).toLocaleTimeString('en-AU', {
-                                        hourCycle: 'h23',
-                                    }) +
-                                    ' ' +
-                                    new Date(
-                                        activeTask.created_at
-                                    ).toLocaleDateString('en-AU')
+                                          activeTask.created_at
+                                      ).toLocaleTimeString('en-AU', {
+                                          hourCycle: 'h23',
+                                      }) +
+                                      ' ' +
+                                      new Date(
+                                          activeTask.created_at
+                                      ).toLocaleDateString('en-AU')
                                     : '--'}
                             </p>
                         </div>
@@ -312,7 +333,9 @@ export default function TrackPage({ projectNames }) {
                         </div>
 
                         <div className='border border-gray-700 rounded p-2'>
-                            <p className='text-sm font-medium'>Accumulated Hours</p>
+                            <p className='text-sm font-medium'>
+                                Accumulated Hours
+                            </p>
                             <p>{accumulatedTime}</p>
                         </div>
                     </div>
@@ -325,32 +348,42 @@ export default function TrackPage({ projectNames }) {
                     Task History
                 </h5>
 
-                <div className="w-full">
+                <div className='w-full'>
                     {/* Desktop Table */}
-                    <div className="hidden md:block overflow-x-auto">
-                        <table className="w-full table-auto">
+                    <div className='hidden md:block overflow-x-auto'>
+                        <table className='w-full table-auto'>
                             <thead>
-                                <tr className="text-xs">
-                                    <th className="w-auto">Task</th>
-                                    {!userOwnsTaskHistory() && <th className="w-auto">User</th>}
-                                    <th className="w-20">Date</th>
-                                    <th className="w-12 text-center">Start</th>
-                                    <th className="w-12 text-center">End</th>
-                                    <th className="w-16 text-center">Minutes</th>
-                                    <th className="min-w-80">Comments</th>
-                                    <th className="w-12"></th>
+                                <tr className='text-xs'>
+                                    <th className='w-auto'>Task</th>
+                                    {!userOwnsTaskHistory() && (
+                                        <th className='w-auto'>User</th>
+                                    )}
+                                    <th className='w-20'>Date</th>
+                                    <th className='w-12 text-center'>Start</th>
+                                    <th className='w-12 text-center'>End</th>
+                                    <th className='w-16 text-center'>
+                                        Minutes
+                                    </th>
+                                    <th className='min-w-80'>Comments</th>
+                                    <th className='w-12'></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {taskHistory
                                     .slice()
-                                    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                                    .sort(
+                                        (a, b) =>
+                                            new Date(b.created_at) -
+                                            new Date(a.created_at)
+                                    )
                                     .map((task) => (
                                         <TaskHistoryItem
                                             key={task.id}
                                             task={task}
                                             showUser={!userOwnsTaskHistory()}
-                                            handleDeleteTask={openConfirmDeleteTaskModal}
+                                            handleDeleteTask={
+                                                openConfirmDeleteTaskModal
+                                            }
                                             isMobile={false}
                                         />
                                     ))}
@@ -359,22 +392,27 @@ export default function TrackPage({ projectNames }) {
                     </div>
 
                     {/* Mobile Card View */}
-                    <div className="block md:hidden space-y-4">
+                    <div className='block md:hidden space-y-4'>
                         {taskHistory
                             .slice()
-                            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                            .sort(
+                                (a, b) =>
+                                    new Date(b.created_at) -
+                                    new Date(a.created_at)
+                            )
                             .map((task) => (
                                 <TaskHistoryItem
                                     key={task.id}
                                     task={task}
                                     showUser={!userOwnsTaskHistory()}
-                                    handleDeleteTask={openConfirmDeleteTaskModal}
+                                    handleDeleteTask={
+                                        openConfirmDeleteTaskModal
+                                    }
                                     isMobile={true}
                                 />
                             ))}
                     </div>
                 </div>
-
             </div>
 
             {/* Task Comment Modal */}
